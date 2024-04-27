@@ -6,8 +6,6 @@ const StereoEffectScene = () => {
   const containerRef = useRef(null);
   const mouseX = useRef(0);
   const mouseY = useRef(0);
-  const windowHalfX = window.innerWidth / 2;
-  const windowHalfY = window.innerHeight / 2;
   const spheres = useRef([]);
   const cameraRef = useRef(null);
 
@@ -69,6 +67,7 @@ const StereoEffectScene = () => {
       // Creating a WebGL renderer
       renderer = new THREE.WebGLRenderer();
       renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight); // Set renderer size to window size
       container.appendChild(renderer.domElement);
 
       // Creating a stereo effect
@@ -78,33 +77,20 @@ const StereoEffectScene = () => {
       // Event listeners for resizing window and mouse movement
       window.addEventListener("resize", onWindowResize);
       document.addEventListener("mousemove", onDocumentMouseMove);
-      // Event listener for device orientation
-      window.addEventListener("deviceorientation", onDeviceOrientation);
     };
 
     const onWindowResize = () => {
       // Adjusting camera aspect ratio and effect size on window resize
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
       effect.setSize(window.innerWidth, window.innerHeight);
     };
 
     const onDocumentMouseMove = (event) => {
       // Updating mouse position on mouse movement
-      mouseX.current = (event.clientX - windowHalfX) * 10;
-      mouseY.current = (event.clientY - windowHalfY) * 10;
-    };
-
-    const onDeviceOrientation = (event) => {
-      // Update camera orientation based on device orientation
-      const alpha = event.alpha; // Z rotation [0, 360]
-      const beta = event.beta; // X rotation [-180, 180]
-      const gamma = event.gamma; // Y rotation [-90, 90]
-
-      // Adjust camera orientation based on device rotation
-      camera.rotation.x = beta * (Math.PI / 180); // Convert to radians
-      camera.rotation.y = gamma * (Math.PI / 180); // Convert to radians
-      camera.rotation.z = alpha * (Math.PI / 180); // Convert to radians
+      mouseX.current = (event.clientX - window.innerWidth / 2) * 10;
+      mouseY.current = (event.clientY - window.innerHeight / 2) * 10;
     };
 
     const animate = () => {
@@ -142,13 +128,18 @@ const StereoEffectScene = () => {
       // Removing event listeners and renderer's DOM element on unmount
       window.removeEventListener("resize", onWindowResize);
       document.removeEventListener("mousemove", onDocumentMouseMove);
-      window.removeEventListener("deviceorientation", onDeviceOrientation);
       containerRef.current.removeChild(renderer.domElement);
     };
   }, []); // Empty dependency array ensures useEffect runs only once
 
   // Returning a div container for the scene
-  return <div ref={containerRef} id="info"></div>;
+  return (
+    <div
+      ref={containerRef}
+      id="info"
+      style={{ overflow: "hidden", width: "100%", height: "100%", margin: 0 }}
+    ></div>
+  );
 };
 
 export default StereoEffectScene;
