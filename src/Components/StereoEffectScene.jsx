@@ -31,24 +31,32 @@ const StereoEffectScene = () => {
       scene = new THREE.Scene();
       // Loading a cube texture as background
       // Setting background color to blue
-      scene.background = new THREE.Color(0x2b0ffc); // 0x0000ff represents blue color in hexadecimal
+      scene.background = new THREE.Color(0x011c47); // 0x0000ff represents blue color in hexadecimal
 
       // Creating a directional light
-      directionalLight = new THREE.DirectionalLight(0xffffff, 5);
-      directionalLight.position.set(0, 1, 1).normalize();
+      directionalLight = new THREE.DirectionalLight(0xffffff, 6);
+      directionalLight.position.set(1, 1, 1).normalize();
       scene.add(directionalLight);
 
+      const pointLight = new THREE.PointLight(0xffffff, 2);
+      pointLight.position.set(1, 5, 0);
+      scene.add(pointLight);
+
       // Creating a sphere geometry
-      const geometry = new THREE.SphereGeometry(Math.random() * 300 - 100);
+      const geometry = new THREE.SphereGeometry(150);
 
       // Creating a basic material with red color
       const material = new THREE.MeshStandardMaterial({
         color: new THREE.Color(0x5391f5),
-        roughness: 0,
+        roughness: 1,
+        metalness: 1,
+        opacity: 1,
+        emissive: new THREE.Color(0x5391f5),
+        fog: true,
       });
 
       // Creating and adding spheres to the scene
-      for (let i = 0; i < 500; i++) {
+      for (let i = 0; i < 200; i++) {
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.x = Math.random() * 10000 - 5000;
         mesh.position.y = Math.random() * 10000 - 5000;
