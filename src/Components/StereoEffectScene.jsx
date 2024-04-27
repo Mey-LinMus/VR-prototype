@@ -137,7 +137,12 @@ const StereoEffectScene = () => {
     <div
       ref={containerRef}
       id="info"
-      style={{ overflow: "hidden", width: "100%", height: "100%", margin: 0 }}
+      style={{
+        overflow: "hidden",
+        width: "100%",
+        height: "100%",
+        margin: 0,
+      }}
     ></div>
   );
 };
