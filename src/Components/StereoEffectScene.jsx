@@ -108,7 +108,7 @@ const StereoEffectScene = () => {
 
     return () => {
       window.removeEventListener("resize", onWindowResize);
-      window.removeEventListener("deviceorientation", onDeviceOrientation);
+      window.removeEventListener("deviceorientation", onDeviceOrientation); // Device Orientation 
       containerRef.current.removeChild(renderer.domElement);
     };
   }, []);
