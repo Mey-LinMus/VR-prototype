@@ -1,10 +1,55 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import * as THREE from "three";
 
-const DeviceOrientationMotionComponent = () => {
+const DemoOrientation = () => {
   const [orientationData, setOrientationData] = useState(null);
   const [motionData, setMotionData] = useState(null);
+  const canvasRef = useRef(null);
 
   useEffect(() => {
+    if (!canvasRef.current) return; // Ensure canvasRef is initialized
+
+    // Initialize Three.js scene
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    // Create 3 rectangles
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const rect1 = new THREE.Mesh(geometry, material);
+    const rect2 = new THREE.Mesh(geometry, material);
+    const rect3 = new THREE.Mesh(geometry, material);
+    scene.add(rect1, rect2, rect3);
+
+    // Set initial camera position
+    camera.position.z = 5;
+
+    // Function to update Camera based on device orientation
+    const updateCamera = () => {
+      if (orientationData) {
+        // Update camera based on device orientation
+        camera.rotation.x = orientationData.beta;
+        camera.rotation.y = orientationData.gamma;
+        camera.rotation.z = orientationData.alpha;
+      }
+    };
+
+    // Function to animate the scene
+    const animate = () => {
+      requestAnimationFrame(animate);
+      updateCamera();
+      renderer.render(scene, camera);
+    };
+
+    animate();
+    ////// DeviceOrientation //////
     const requestPermission = () => {
       if (
         typeof DeviceOrientationEvent !== "undefined" &&
@@ -57,7 +102,7 @@ const DeviceOrientationMotionComponent = () => {
       window.removeEventListener("deviceorientation", handleDeviceOrientation);
       window.removeEventListener("devicemotion", handleDeviceMotion);
     };
-  }, []);
+  }, [orientationData]);
 
   return (
     <div>
@@ -86,8 +131,9 @@ const DeviceOrientationMotionComponent = () => {
         )}
         <button id="request">Request Permission</button>
       </div>
+      <canvas ref={canvasRef} />
     </div>
   );
 };
 
-export default DeviceOrientationMotionComponent;
+export default DemoOrientation;
