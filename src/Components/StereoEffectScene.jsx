@@ -10,39 +10,6 @@ const StereoEffectScene = () => {
   const [orientationData, setOrientationData] = useState(null);
   const [motionData, setMotionData] = useState(null);
 
-  // Function to request permission for accessing device orientation
-  const requestPermission = () => {
-    if (
-      typeof DeviceOrientationEvent !== "undefined" &&
-      typeof DeviceOrientationEvent.requestPermission === "function"
-    ) {
-      DeviceOrientationEvent.requestPermission()
-        .then((response) => {
-          if (response === "granted") {
-            // If permission granted, listen for device motion events
-            window.addEventListener("devicemotion", handleDeviceMotion);
-          }
-        })
-        .catch(console.error);
-    } else {
-      alert("DeviceMotionEvent is not defined");
-    }
-  };
-
-  // Function to handle device motion events
-  const handleDeviceMotion = (event) => {
-    const acceleration = event.acceleration; // Acceleration data
-    const accelerationIncludingGravity = event.accelerationIncludingGravity; // Acceleration data including gravity
-    const rotationRate = event.rotationRate; // Device rotation rate
-
-    // Use the motion data as needed
-    setMotionData({
-      acceleration,
-      accelerationIncludingGravity,
-      rotationRate,
-    });
-  };
-
   useEffect(() => {
     let camera, scene, renderer, effect, directionalLight;
 
@@ -148,6 +115,26 @@ const StereoEffectScene = () => {
 
     ////// DeviceOrientation //////
 
+    // Function to request permission for accessing device orientation
+    const requestPermission = () => {
+      if (
+        typeof DeviceOrientationEvent !== "undefined" &&
+        typeof DeviceOrientationEvent.requestPermission === "function"
+      ) {
+        DeviceOrientationEvent.requestPermission()
+          .then((response) => {
+            if (response === "granted") {
+              // If permission granted, listen for device motion events
+              window.addEventListener("devicemotion", handleDeviceMotion);
+            }
+          })
+          .catch(console.error);
+      } else {
+        alert("DeviceMotionEvent is not defined");
+      }
+    };
+    const btn = document.getElementById("request");
+    btn.addEventListener("click", requestPermission);
     const handleDeviceOrientation = (event) => {
       const alpha = event.alpha; // rotation around the z-axis
       const beta = event.beta; // rotation around the x-axis
@@ -157,8 +144,22 @@ const StereoEffectScene = () => {
       // Use the orientation data as needed
     };
 
-    // Add event listeners for device orientation
+    const handleDeviceMotion = (event) => {
+      const acceleration = event.acceleration; // Acceleration data
+      const accelerationIncludingGravity = event.accelerationIncludingGravity; // Acceleration data including gravity
+      const rotationRate = event.rotationRate; // Device rotation rate
+
+      // Use the motion data as needed
+      setMotionData({
+        acceleration,
+        accelerationIncludingGravity,
+        rotationRate,
+      });
+    };
+
+    // Add event listeners for device orientation and motion
     window.addEventListener("deviceorientation", handleDeviceOrientation, true);
+    window.addEventListener("devicemotion", handleDeviceMotion, true);
 
     // Cleanup: remove event listeners when component unmounts
     return () => {
@@ -179,7 +180,7 @@ const StereoEffectScene = () => {
         margin: 0,
       }}
     >
-      <button onClick={requestPermission}>Request Permission</button>
+      <button id="request">Request Permission</button>
     </div>
   );
 };
