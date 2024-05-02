@@ -1,6 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
-function PrototypeOrientation() {
+function DeviceOrientationComponent() {
+  const [orientationData, setOrientationData] = useState(null);
+  const [motionData, setMotionData] = useState(null);
+
   useEffect(() => {
     function handleDeviceOrientation(event) {
       const alpha = event.alpha; // rotation around the z-axis
@@ -8,7 +11,7 @@ function PrototypeOrientation() {
       const gamma = event.gamma; // rotation around the y-axis
 
       // Use the orientation data as needed
-      console.log("Orientation Data:", { alpha, beta, gamma });
+      setOrientationData({ alpha, beta, gamma });
     }
 
     function handleDeviceMotion(event) {
@@ -17,7 +20,7 @@ function PrototypeOrientation() {
       const rotationRate = event.rotationRate; // Device rotation rate
 
       // Use the motion data as needed
-      console.log("Motion Data:", {
+      setMotionData({
         acceleration,
         accelerationIncludingGravity,
         rotationRate,
@@ -40,9 +43,31 @@ function PrototypeOrientation() {
   return (
     <div>
       <h1>Device Orientation & Motion Demo</h1>
-      <p>Check the console for data.</p>
+      <div>
+        <h2>Orientation Data</h2>
+        {orientationData && (
+          <ul>
+            <li>Alpha: {orientationData.alpha}</li>
+            <li>Beta: {orientationData.beta}</li>
+            <li>Gamma: {orientationData.gamma}</li>
+          </ul>
+        )}
+      </div>
+      <div>
+        <h2>Motion Data</h2>
+        {motionData && (
+          <ul>
+            <li>Acceleration: {JSON.stringify(motionData.acceleration)}</li>
+            <li>
+              Acceleration Including Gravity:{" "}
+              {JSON.stringify(motionData.accelerationIncludingGravity)}
+            </li>
+            <li>Rotation Rate: {JSON.stringify(motionData.rotationRate)}</li>
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
 
-export default PrototypeOrientation;
+export default DeviceOrientationComponent;

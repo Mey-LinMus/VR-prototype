@@ -3,14 +3,14 @@ import React from "react";
 import StereoEffectScene from "./StereoEffectScene";
 // import WebXR from "./WebXR"
 import BackgroundMusic from "./Music";
-import DeviceOrientation from "./DeviceOrientation";
-
+// import DeviceOrientation from "./DeviceOrientation";
+import PrototypeOrientation from "./PrototypeOrientation";
 function App() {
   return (
     <div className="App">
       {/* <BackgroundMusic />
       <StereoEffectScene /> */}
-      <DeviceOrientation />
+      <PrototypeOrientation />
     </div>
   );
 }
