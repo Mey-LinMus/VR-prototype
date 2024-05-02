@@ -5,77 +5,69 @@ function DeviceOrientationComponent() {
   const [motionData, setMotionData] = useState(null);
 
   useEffect(() => {
-    // Request permission for Device Orientation
-    if (typeof DeviceOrientationEvent.requestPermission === "function") {
-      DeviceOrientationEvent.requestPermission()
-        .then((permissionState) => {
-          if (permissionState === "granted") {
-            startListening();
-          } else {
-            console.error("Permission for Device Orientation denied by user.");
-          }
-        })
-        .catch(console.error);
-    } else {
-      startListening();
-    }
-
-    // Request permission for Device Motion
+    // Request permission for device motion
     if (typeof DeviceMotionEvent.requestPermission === "function") {
       DeviceMotionEvent.requestPermission()
-        .then((permissionState) => {
-          if (permissionState === "granted") {
-            startListening();
-          } else {
-            console.error("Permission for Device Motion denied by user.");
+        .then((response) => {
+          if (response === "granted") {
+            window.addEventListener("devicemotion", handleDeviceMotion, true);
           }
         })
         .catch(console.error);
     } else {
-      startListening();
+      // Fallback for non iOS 13+ devices
+      window.addEventListener("devicemotion", handleDeviceMotion, true);
     }
 
-    // Start listening to device orientation and motion events
-    function startListening() {
-      function handleDeviceOrientation(event) {
-        const alpha = event.alpha; // rotation around the z-axis
-        const beta = event.beta; // rotation around the x-axis
-        const gamma = event.gamma; // rotation around the y-axis
-
-        // Use the orientation data as needed
-        setOrientationData({ alpha, beta, gamma });
-      }
-
-      function handleDeviceMotion(event) {
-        const acceleration = event.acceleration; // Acceleration data
-        const accelerationIncludingGravity = event.accelerationIncludingGravity; // Acceleration data including gravity
-        const rotationRate = event.rotationRate; // Device rotation rate
-
-        // Use the motion data as needed
-        setMotionData({
-          acceleration,
-          accelerationIncludingGravity,
-          rotationRate,
-        });
-      }
-
+    // Request permission for device orientation
+    if (typeof DeviceOrientationEvent.requestPermission === "function") {
+      DeviceOrientationEvent.requestPermission()
+        .then((response) => {
+          if (response === "granted") {
+            window.addEventListener(
+              "deviceorientation",
+              handleDeviceOrientation,
+              true
+            );
+          }
+        })
+        .catch(console.error);
+    } else {
+      // Fallback for non iOS 13+ devices
       window.addEventListener(
         "deviceorientation",
         handleDeviceOrientation,
         true
       );
-      window.addEventListener("devicemotion", handleDeviceMotion, true);
-
-      return () => {
-        window.removeEventListener(
-          "deviceorientation",
-          handleDeviceOrientation,
-          true
-        );
-        window.removeEventListener("devicemotion", handleDeviceMotion, true);
-      };
     }
+
+    return () => {
+      window.removeEventListener("devicemotion", handleDeviceMotion, true);
+      window.removeEventListener(
+        "deviceorientation",
+        handleDeviceOrientation,
+        true
+      );
+    };
   }, []);
+
+  function handleDeviceOrientation(event) {
+    const alpha = event.alpha; // rotation around the z-axis
+    const beta = event.beta; // rotation around the x-axis
+    const gamma = event.gamma; // rotation around the y-axis
+
+    // Use the orientation data as needed
+    setOrientationData({ alpha, beta, gamma });
+  }
+
+  function handleDeviceMotion(event) {
+    const acceleration = event.acceleration; // Acceleration data
+    const accelerationIncludingGravity = event.accelerationIncludingGravity; // Acceleration data including gravity
+    const rotationRate = event.rotationRate; // Device rotation rate
+
+    // Use the motion data as needed
+    setMotionData({ acceleration, accelerationIncludingGravity, rotationRate });
+  }
 
   return (
     <div>
