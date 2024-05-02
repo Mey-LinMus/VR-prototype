@@ -2,60 +2,52 @@ import React, { useState, useEffect, useRef } from "react";
 import * as THREE from "three";
 
 const PrototypeOrientation = () => {
-  // State variables to store orientation and motion data
   const [orientationData, setOrientationData] = useState(null);
   const [motionData, setMotionData] = useState(null);
-
-  // Reference to the canvas element
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    // Check if canvasRef is initialized
     if (!canvasRef.current) return;
 
-    // Initialize Three.js scene
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(
-      60,
+      75,
       window.innerWidth / window.innerHeight,
-      1,
-      100000
+      0.1,
+      1000
     );
     const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    // Create 3 rectangles
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    const rect1 = new THREE.Mesh(geometry, material);
-    const rect2 = new THREE.Mesh(geometry, material);
-    const rect3 = new THREE.Mesh(geometry, material);
-    scene.add(rect1, rect2, rect3);
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshPhongMaterial({ color: 0xffffff });
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
 
-    // Set initial camera position
+    const light = new THREE.PointLight(0xffffff, 1, 100);
+    light.position.set(0, 0, 10);
+    scene.add(light);
+
     camera.position.z = 5;
 
-    // Function to update Camera based on device orientation
     const updateCamera = () => {
       if (orientationData) {
-        // Update camera based on device orientation
         camera.rotation.x = orientationData.beta;
         camera.rotation.y = orientationData.gamma;
         camera.rotation.z = orientationData.alpha;
       }
     };
 
-    // Function to animate the scene
     const animate = () => {
       requestAnimationFrame(animate);
+      cube.rotation.x += 0.01;
+      cube.rotation.y += 0.01;
       updateCamera();
       renderer.render(scene, camera);
     };
 
     animate();
 
-    ////// DeviceOrientation //////
-    // Function to request permission for accessing device orientation
     const requestPermission = () => {
       if (
         typeof DeviceOrientationEvent !== "undefined" &&
@@ -64,7 +56,6 @@ const PrototypeOrientation = () => {
         DeviceOrientationEvent.requestPermission()
           .then((response) => {
             if (response === "granted") {
-              // If permission granted, listen for device motion events
               window.addEventListener("devicemotion", handleDeviceMotion);
             }
           })
@@ -74,27 +65,18 @@ const PrototypeOrientation = () => {
       }
     };
 
-    // Event listener for permission request button
-    const btn = document.getElementById("request");
-    btn.addEventListener("click", requestPermission);
-
-    // Event handler for device orientation data
     const handleDeviceOrientation = (event) => {
-      const alpha = event.alpha; // rotation around the z-axis
-      const beta = event.beta; // rotation around the x-axis
-      const gamma = event.gamma; // rotation around the y-axis
+      const alpha = event.alpha;
+      const beta = event.beta;
+      const gamma = event.gamma;
       setOrientationData({ alpha, beta, gamma });
-
-      // Use the orientation data as needed
     };
 
-    // Event handler for device motion data
     const handleDeviceMotion = (event) => {
-      const acceleration = event.acceleration; // Acceleration data
-      const accelerationIncludingGravity = event.accelerationIncludingGravity; // Acceleration data including gravity
-      const rotationRate = event.rotationRate; // Device rotation rate
+      const acceleration = event.acceleration;
+      const accelerationIncludingGravity = event.accelerationIncludingGravity;
+      const rotationRate = event.rotationRate;
 
-      // Use the motion data as needed
       setMotionData({
         acceleration,
         accelerationIncludingGravity,
@@ -102,17 +84,19 @@ const PrototypeOrientation = () => {
       });
     };
 
-    // Add event listeners for device orientation and motion
     window.addEventListener("deviceorientation", handleDeviceOrientation, true);
     window.addEventListener("devicemotion", handleDeviceMotion, true);
 
-    // Request permission for device orientation access
     requestPermission();
 
-    // Cleanup: remove event listeners when component unmounts
     return () => {
-      window.removeEventListener("deviceorientation", handleDeviceOrientation);
-      window.removeEventListener("devicemotion", handleDeviceMotion);
+      if (canvasRef.current) {
+        window.removeEventListener(
+          "deviceorientation",
+          handleDeviceOrientation
+        );
+        window.removeEventListener("devicemotion", handleDeviceMotion);
+      }
     };
   }, [orientationData]);
 
