@@ -5,39 +5,76 @@ function DeviceOrientationComponent() {
   const [motionData, setMotionData] = useState(null);
 
   useEffect(() => {
-    function handleDeviceOrientation(event) {
-      const alpha = event.alpha; // rotation around the z-axis
-      const beta = event.beta; // rotation around the x-axis
-      const gamma = event.gamma; // rotation around the y-axis
-
-      // Use the orientation data as needed
-      setOrientationData({ alpha, beta, gamma });
+    // Request permission for Device Orientation
+    if (typeof DeviceOrientationEvent.requestPermission === "function") {
+      DeviceOrientationEvent.requestPermission()
+        .then((permissionState) => {
+          if (permissionState === "granted") {
+            startListening();
+          } else {
+            console.error("Permission for Device Orientation denied by user.");
+          }
+        })
+        .catch(console.error);
+    } else {
+      startListening();
     }
 
-    function handleDeviceMotion(event) {
-      const acceleration = event.acceleration; // Acceleration data
-      const accelerationIncludingGravity = event.accelerationIncludingGravity; // Acceleration data including gravity
-      const rotationRate = event.rotationRate; // Device rotation rate
-
-      // Use the motion data as needed
-      setMotionData({
-        acceleration,
-        accelerationIncludingGravity,
-        rotationRate,
-      });
+    // Request permission for Device Motion
+    if (typeof DeviceMotionEvent.requestPermission === "function") {
+      DeviceMotionEvent.requestPermission()
+        .then((permissionState) => {
+          if (permissionState === "granted") {
+            startListening();
+          } else {
+            console.error("Permission for Device Motion denied by user.");
+          }
+        })
+        .catch(console.error);
+    } else {
+      startListening();
     }
 
-    window.addEventListener("deviceorientation", handleDeviceOrientation, true);
-    window.addEventListener("devicemotion", handleDeviceMotion, true);
+    // Start listening to device orientation and motion events
+    function startListening() {
+      function handleDeviceOrientation(event) {
+        const alpha = event.alpha; // rotation around the z-axis
+        const beta = event.beta; // rotation around the x-axis
+        const gamma = event.gamma; // rotation around the y-axis
 
-    return () => {
-      window.removeEventListener(
+        // Use the orientation data as needed
+        setOrientationData({ alpha, beta, gamma });
+      }
+
+      function handleDeviceMotion(event) {
+        const acceleration = event.acceleration; // Acceleration data
+        const accelerationIncludingGravity = event.accelerationIncludingGravity; // Acceleration data including gravity
+        const rotationRate = event.rotationRate; // Device rotation rate
+
+        // Use the motion data as needed
+        setMotionData({
+          acceleration,
+          accelerationIncludingGravity,
+          rotationRate,
+        });
+      }
+
+      window.addEventListener(
         "deviceorientation",
         handleDeviceOrientation,
         true
       );
-      window.removeEventListener("devicemotion", handleDeviceMotion, true);
-    };
+      window.addEventListener("devicemotion", handleDeviceMotion, true);
+
+      return () => {
+        window.removeEventListener(
+          "deviceorientation",
+          handleDeviceOrientation,
+          true
+        );
+        window.removeEventListener("devicemotion", handleDeviceMotion, true);
+      };
+    }
   }, []);
 
   return (

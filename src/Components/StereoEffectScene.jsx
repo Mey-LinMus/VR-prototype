@@ -77,7 +77,6 @@ const StereoEffectScene = () => {
       // Event listeners for resizing window and mouse movement
       window.addEventListener("resize", onWindowResize);
       document.addEventListener("mousemove", onDocumentMouseMove);
-      window.addEventListener("deviceorientation", handleDeviceOrientation); // Adding device orientation listener
     };
 
     const onWindowResize = () => {
@@ -92,22 +91,6 @@ const StereoEffectScene = () => {
       // Updating mouse position on mouse movement
       mouseX.current = (event.clientX - window.innerWidth / 2) * 10;
       mouseY.current = (event.clientY - window.innerHeight / 2) * 10;
-    };
-
-    const handleDeviceOrientation = (event) => {
-      const alpha = event.alpha; // Z-axis rotation
-      const beta = event.beta; // X-axis rotation
-      const gamma = event.gamma; // Y-axis rotation
-
-      // Convert degrees to radians
-      const alphaRad = (alpha * Math.PI) / 180;
-      const betaRad = (beta * Math.PI) / 180;
-      const gammaRad = (gamma * Math.PI) / 180;
-
-      // Update camera rotation
-      camera.rotation.z = alphaRad;
-      camera.rotation.x = betaRad;
-      camera.rotation.y = gammaRad;
     };
 
     const animate = () => {
@@ -145,7 +128,6 @@ const StereoEffectScene = () => {
       // Removing event listeners and renderer's DOM element on unmount
       window.removeEventListener("resize", onWindowResize);
       document.removeEventListener("mousemove", onDocumentMouseMove);
-      window.removeEventListener("deviceorientation", handleDeviceOrientation);
       containerRef.current.removeChild(renderer.domElement);
     };
   }, []); // Empty dependency array ensures useEffect runs only once
