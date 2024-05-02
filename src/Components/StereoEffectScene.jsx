@@ -1,13 +1,47 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { StereoEffect } from "three/examples/jsm/effects/StereoEffect.js";
 
 const StereoEffectScene = () => {
   const containerRef = useRef(null);
-  const mouseX = useRef(0);
-  const mouseY = useRef(0);
   const spheres = useRef([]);
   const cameraRef = useRef(null);
+
+  const [orientationData, setOrientationData] = useState(null);
+  const [motionData, setMotionData] = useState(null);
+
+  // Function to request permission for accessing device orientation
+  const requestPermission = () => {
+    if (
+      typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function"
+    ) {
+      DeviceOrientationEvent.requestPermission()
+        .then((response) => {
+          if (response === "granted") {
+            // If permission granted, listen for device motion events
+            window.addEventListener("devicemotion", handleDeviceMotion);
+          }
+        })
+        .catch(console.error);
+    } else {
+      alert("DeviceMotionEvent is not defined");
+    }
+  };
+
+  // Function to handle device motion events
+  const handleDeviceMotion = (event) => {
+    const acceleration = event.acceleration; // Acceleration data
+    const accelerationIncludingGravity = event.accelerationIncludingGravity; // Acceleration data including gravity
+    const rotationRate = event.rotationRate; // Device rotation rate
+
+    // Use the motion data as needed
+    setMotionData({
+      acceleration,
+      accelerationIncludingGravity,
+      rotationRate,
+    });
+  };
 
   useEffect(() => {
     let camera, scene, renderer, effect, directionalLight;
@@ -73,40 +107,29 @@ const StereoEffectScene = () => {
       // Creating a stereo effect
       effect = new StereoEffect(renderer);
       effect.setSize(window.innerWidth, window.innerHeight);
-
-      // Event listeners for resizing window and mouse movement
-      window.addEventListener("resize", onWindowResize);
-      document.addEventListener("mousemove", onDocumentMouseMove);
     };
 
-    const onWindowResize = () => {
-      // Adjusting camera aspect ratio and effect size on window resize
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      effect.setSize(window.innerWidth, window.innerHeight);
-    };
-
-    const onDocumentMouseMove = (event) => {
-      // Updating mouse position on mouse movement
-      mouseX.current = (event.clientX - window.innerWidth / 2) * 10;
-      mouseY.current = (event.clientY - window.innerHeight / 2) * 10;
+    // Function to update Camera based on device orientation
+    const updateCamera = () => {
+      if (orientationData) {
+        // Update camera based on device orientation
+        camera.rotation.x = orientationData.beta;
+        camera.rotation.y = orientationData.gamma;
+        camera.rotation.z = orientationData.alpha;
+      }
     };
 
     const animate = () => {
       // Recursive animation function
       requestAnimationFrame(animate);
       render();
+      updateCamera();
+      // renderer.render(scene, camera);
     };
 
     const render = () => {
       // Rendering function
       const timer = 0.00001 * Date.now();
-
-      // Updating camera position based on mouse movement
-      camera.position.x += (mouseX.current - camera.position.x) * 0.05;
-      camera.position.y += (-mouseY.current - camera.position.y) * 0.05;
-      camera.lookAt(scene.position);
 
       // Moving spheres in a circular pattern
       for (let i = 0, il = spheres.current.length; i < il; i++) {
@@ -123,12 +146,24 @@ const StereoEffectScene = () => {
     init();
     animate();
 
-    // Clean up function
+    ////// DeviceOrientation //////
+
+    const handleDeviceOrientation = (event) => {
+      const alpha = event.alpha; // rotation around the z-axis
+      const beta = event.beta; // rotation around the x-axis
+      const gamma = event.gamma; // rotation around the y-axis
+      setOrientationData({ alpha, beta, gamma });
+
+      // Use the orientation data as needed
+    };
+
+    // Add event listeners for device orientation
+    window.addEventListener("deviceorientation", handleDeviceOrientation, true);
+
+    // Cleanup: remove event listeners when component unmounts
     return () => {
-      // Removing event listeners and renderer's DOM element on unmount
-      window.removeEventListener("resize", onWindowResize);
-      document.removeEventListener("mousemove", onDocumentMouseMove);
-      containerRef.current.removeChild(renderer.domElement);
+      window.removeEventListener("deviceorientation", handleDeviceOrientation);
+      window.removeEventListener("devicemotion", handleDeviceMotion);
     };
   }, []); // Empty dependency array ensures useEffect runs only once
 
@@ -143,7 +178,9 @@ const StereoEffectScene = () => {
         height: "100%",
         margin: 0,
       }}
-    ></div>
+    >
+      <button onClick={requestPermission}>Request Permission</button>
+    </div>
   );
 };
 

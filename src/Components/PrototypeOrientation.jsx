@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as THREE from "three";
 
-const DemoOrientation = () => {
+const PrototypeOrientation = () => {
   // State variables to store orientation and motion data
   const [orientationData, setOrientationData] = useState(null);
   const [motionData, setMotionData] = useState(null);
@@ -135,7 +135,7 @@ const DemoOrientation = () => {
           <ul>
             <li>Acceleration: {JSON.stringify(motionData.acceleration)}</li>
             <li>
-              Acceleration Including Gravity:{" "}
+              Acceleration Including Gravity:
               {JSON.stringify(motionData.accelerationIncludingGravity)}
             </li>
             <li>Rotation Rate: {JSON.stringify(motionData.rotationRate)}</li>
@@ -148,4 +148,4 @@ const DemoOrientation = () => {
   );
 };
 
-export default DemoOrientation;
+export default PrototypeOrientation;

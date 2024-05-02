@@ -8,9 +8,9 @@ import PrototypeOrientation from "./PrototypeOrientation";
 function App() {
   return (
     <div className="App">
-      {/* <BackgroundMusic />
-      <StereoEffectScene /> */}
-      <PrototypeOrientation />
+      {/* <BackgroundMusic />*/}
+      <StereoEffectScene />
+      {/* <PrototypeOrientation /> */}
     </div>
   );
 }
