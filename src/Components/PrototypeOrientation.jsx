@@ -5,11 +5,15 @@ const PrototypeOrientation = () => {
   const [orientationData, setOrientationData] = useState(null);
   const [motionData, setMotionData] = useState(null);
   const canvasRef = useRef(null);
+  const spheres = useRef([]);
 
   useEffect(() => {
     if (!canvasRef.current) return;
 
     const scene = new THREE.Scene();
+
+    scene.background = new THREE.Color(0x011c47);
+
     const camera = new THREE.PerspectiveCamera(
       75,
       window.innerWidth / window.innerHeight,
@@ -19,13 +23,30 @@ const PrototypeOrientation = () => {
     const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
     renderer.setSize(window.innerWidth, window.innerHeight);
 
-    const geometry = new THREE.BoxGeometry();
-    const material = new THREE.MeshPhongMaterial({ color: 0xffffff });
-    const cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    const material = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(0x5391f5),
+      roughness: 1,
+      metalness: 1,
+      opacity: 1,
+      emissive: new THREE.Color(0x5391f5),
+      fog: true,
+    });
+    // Creating a sphere geometry
 
-    const light = new THREE.PointLight(0xffffff, 1, 100);
-    light.position.set(0, 0, 10);
+    const geometry = new THREE.SphereGeometry(150);
+
+    for (let i = 0; i < 500; i++) {
+      const mesh = new THREE.Mesh(geometry, material);
+      mesh.position.x = Math.random() * 10000 - 5000;
+      mesh.position.y = Math.random() * 10000 - 5000;
+      mesh.position.z = Math.random() * 10000 - 5000;
+      mesh.scale.x = mesh.scale.y = mesh.scale.z = Math.random() * 2 + 1;
+      scene.add(mesh);
+      spheres.current.push(mesh);
+    }
+
+    const light = new THREE.DirectionalLight(0xffffff, 6);
+    light.position.set(1, 1, 1).normalize();
     scene.add(light);
 
     camera.position.z = 5;
@@ -40,30 +61,28 @@ const PrototypeOrientation = () => {
 
     const animate = () => {
       requestAnimationFrame(animate);
-      cube.rotation.x += 0.01;
-      cube.rotation.y += 0.01;
       updateCamera();
       renderer.render(scene, camera);
     };
 
     animate();
 
-    const requestPermission = () => {
-      if (
-        typeof DeviceOrientationEvent !== "undefined" &&
-        typeof DeviceOrientationEvent.requestPermission === "function"
-      ) {
-        DeviceOrientationEvent.requestPermission()
-          .then((response) => {
-            if (response === "granted") {
-              window.addEventListener("devicemotion", handleDeviceMotion);
-            }
-          })
-          .catch(console.error);
-      } else {
-        alert("DeviceMotionEvent is not defined");
-      }
-    };
+    // const requestPermission = () => {
+    //   if (
+    //     typeof DeviceOrientationEvent !== "undefined" &&
+    //     typeof DeviceOrientationEvent.requestPermission === "function"
+    //   ) {
+    //     DeviceOrientationEvent.requestPermission()
+    //       .then((response) => {
+    //         if (response === "granted") {
+    //           window.addEventListener("devicemotion", handleDeviceMotion);
+    //         }
+    //       })
+    //       .catch(console.error);
+    //   } else {
+    //     alert("DeviceMotionEvent is not defined");
+    //   }
+    // };
 
     const handleDeviceOrientation = (event) => {
       const alpha = event.alpha;
@@ -87,7 +106,7 @@ const PrototypeOrientation = () => {
     window.addEventListener("deviceorientation", handleDeviceOrientation, true);
     window.addEventListener("devicemotion", handleDeviceMotion, true);
 
-    requestPermission();
+    // requestPermission();
 
     return () => {
       if (canvasRef.current) {

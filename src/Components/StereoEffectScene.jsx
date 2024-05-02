@@ -61,13 +61,16 @@ const StereoEffectScene = () => {
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(window.innerWidth, window.innerHeight); // Set renderer size to window size
       container.appendChild(renderer.domElement);
+
       // Creating a stereo effect
       effect = new StereoEffect(renderer);
       effect.setSize(window.innerWidth, window.innerHeight);
+
       // Event listeners for resizing window and mouse movement
       window.addEventListener("resize", onWindowResize);
       document.addEventListener("mousemove", onDocumentMouseMove);
     };
+
     const onWindowResize = () => {
       // Adjusting camera aspect ratio and effect size on window resize
       camera.aspect = window.innerWidth / window.innerHeight;
@@ -80,11 +83,13 @@ const StereoEffectScene = () => {
       mouseX.current = (event.clientX - window.innerWidth / 2) * 10;
       mouseY.current = (event.clientY - window.innerHeight / 2) * 10;
     };
+
     const animate = () => {
       // Recursive animation function
       requestAnimationFrame(animate);
       render();
     };
+    
     const render = () => {
       // Rendering function
       const timer = 0.00001 * Date.now();
