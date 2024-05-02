@@ -1,36 +1,30 @@
 import React, { useState, useEffect } from "react";
 
-
 const DeviceOrientationMotionComponent = () => {
   const [orientationData, setOrientationData] = useState(null);
   const [motionData, setMotionData] = useState(null);
 
   useEffect(() => {
     const requestPermission = () => {
-      if (typeof DeviceMotionEvent.requestPermission === "function") {
-        DeviceMotionEvent.requestPermission()
-          .then((permissionState) => {
-            if (permissionState === "granted") {
-              console.log("Permission for device motion events granted");
-            } else {
-              console.log("Permission for device motion events denied");
-            }
-          })
-          .catch(console.error);
-      }
-
-      if (typeof DeviceOrientationEvent.requestPermission === "function") {
+      if (
+        typeof DeviceOrientationEvent !== "undefined" &&
+        typeof DeviceOrientationEvent.requestPermission === "function"
+      ) {
         DeviceOrientationEvent.requestPermission()
-          .then((permissionState) => {
-            if (permissionState === "granted") {
-              console.log("Permission for device orientation events granted");
-            } else {
-              console.log("Permission for device orientation events denied");
+          .then((response) => {
+            if (response === "granted") {
+              window.addEventListener("devicemotion", (e) => {
+                // Handle 'e' here (e.g., update UI based on motion data)
+              });
             }
           })
           .catch(console.error);
+      } else {
+        alert("DeviceMotionEvent is not defined");
       }
     };
+    const btn = document.getElementById("request");
+    btn.addEventListener("click", requestPermission);
 
     const handleDeviceOrientation = (event) => {
       const alpha = event.alpha; // rotation around the z-axis
@@ -90,6 +84,7 @@ const DeviceOrientationMotionComponent = () => {
             <li>Rotation Rate: {JSON.stringify(motionData.rotationRate)}</li>
           </ul>
         )}
+        <button id="request">Request Permission</button>
       </div>
     </div>
   );
