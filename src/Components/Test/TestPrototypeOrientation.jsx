@@ -1,14 +1,10 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as THREE from "three";
-
 const PrototypeOrientation = () => {
   const [orientationData, setOrientationData] = useState(null);
   const [motionData, setMotionData] = useState(null);
-
   const canvasRef = useRef(null);
   const spheres = useRef([]);
-  
-  const orientationDataRef = useRef(null);
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -56,15 +52,9 @@ const PrototypeOrientation = () => {
 
     const updateCamera = () => {
       if (orientationData) {
-        const smoothingFactor = 0.1;
-
-        // Smoothly interpolate between current rotation and new rotation
-        camera.rotation.x +=
-          (orientationData.beta / 5 - camera.rotation.x) * smoothingFactor;
-        camera.rotation.y +=
-          (orientationData.gamma / 5 - camera.rotation.y) * smoothingFactor;
-        camera.rotation.z +=
-          (orientationData.alpha / 5 - camera.rotation.z) * smoothingFactor;
+        camera.rotation.x = orientationData.beta;
+        camera.rotation.y = orientationData.gamma;
+        camera.rotation.z = orientationData.alpha;
       }
     };
 
@@ -72,20 +62,6 @@ const PrototypeOrientation = () => {
       requestAnimationFrame(animate);
       updateCamera();
       renderer.render(scene, camera);
-      render();
-    };
-
-    const render = () => {
-      // Rendering function
-      const timer = 0.00001 * Date.now();
-
-      camera.lookAt(scene.position);
-      // Moving spheres in a circular pattern
-      for (let i = 0, il = spheres.current.length; i < il; i++) {
-        const sphere = spheres.current[i];
-        sphere.position.x = 1000 * Math.cos(timer + i);
-        sphere.position.y = 1000 * Math.sin(timer + i * 1.1);
-      }
     };
 
     animate();
@@ -111,22 +87,18 @@ const PrototypeOrientation = () => {
       const alpha = event.alpha;
       const beta = event.beta;
       const gamma = event.gamma;
-      orientationDataRef.current = { alpha, beta, gamma };
       setOrientationData({ alpha, beta, gamma });
     };
-
     const handleDeviceMotion = (event) => {
       const acceleration = event.acceleration;
       const accelerationIncludingGravity = event.accelerationIncludingGravity;
       const rotationRate = event.rotationRate;
-
       setMotionData({
         acceleration,
         accelerationIncludingGravity,
         rotationRate,
       });
     };
-
     window.addEventListener("deviceorientation", handleDeviceOrientation, true);
     window.addEventListener("devicemotion", handleDeviceMotion, true);
 
@@ -141,8 +113,7 @@ const PrototypeOrientation = () => {
         window.removeEventListener("devicemotion", handleDeviceMotion);
       }
     };
-  }, []);
-
+  }, [orientationData]);
   return (
     <div>
       <h1>Device Orientation & Motion Demo 🤓</h1>
@@ -174,5 +145,4 @@ const PrototypeOrientation = () => {
     </div>
   );
 };
-
 export default PrototypeOrientation;
