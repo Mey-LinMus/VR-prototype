@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import SphereScene from "./SphereScene";
 
 const DeviceOrientationLogics = () => {
   const [orientationData, setOrientationData] = useState(null);
@@ -52,17 +53,16 @@ const DeviceOrientationLogics = () => {
     window.addEventListener("devicemotion", handleDeviceMotion, true);
 
     requestPermission();
+    window.addEventListener("deviceorientation", handleDeviceOrientation, true);
 
     return () => {
-      window.removeEventListener("deviceorientation", handleDeviceOrientation);
       window.removeEventListener("devicemotion", handleDeviceMotion);
     };
   }, []);
 
   return (
     <div>
-      <h1>Device Orientation & Motion Demo 😲</h1>
-      <div>
+      {/* <div>
         <h2>Orientation Data</h2>
         {orientationData && (
           <ul>
@@ -83,9 +83,10 @@ const DeviceOrientationLogics = () => {
             </li>
             <li>Rotation Rate: {JSON.stringify(motionData.rotationRate)}</li>
           </ul>
-        )}
-        <button id="request">Request Permission</button>
-      </div>
+        )} */}
+      <button id="request">Request Permission</button>
+      <SphereScene orientationData={orientationData} />
+      {/* </div> */}
     </div>
   );
 };

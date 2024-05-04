@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { StereoEffect } from "three/examples/jsm/effects/StereoEffect.js";
 
-const SphereScene = () => {
+const SphereScene = ({ orientationData }) => {
   const containerRef = useRef(null);
   const mouseX = useRef(0);
   const mouseY = useRef(0);
@@ -103,6 +103,15 @@ const SphereScene = () => {
         sphere.position.x = 5000 * Math.cos(timer + i);
         sphere.position.y = 5000 * Math.sin(timer + i * 1.1);
       }
+
+      if (orientationData) {
+        const { alpha, beta, gamma } = orientationData;
+        // You need to adjust camera position based on alpha, beta, gamma values
+        camera.position.x = alpha;
+        camera.position.y = beta;
+        camera.position.z = gamma;
+      }
+
       // Rendering scene with stereo effect
       effect.render(scene, camera);
     };
@@ -116,7 +125,7 @@ const SphereScene = () => {
       document.removeEventListener("mousemove", onDocumentMouseMove);
       containerRef.current.removeChild(renderer.domElement);
     };
-  }, []); // Empty dependency array ensures useEffect runs only once
+  }, [orientationData]); // Empty dependency array ensures useEffect runs only once
   // Returning a div container for the scene
   return (
     <div
