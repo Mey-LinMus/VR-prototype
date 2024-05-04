@@ -63,7 +63,7 @@ const DeviceOrientationLogics = () => {
 
   return (
     <div>
-      {/* <div>
+      <div>
         <h2>Orientation Data</h2>
         {orientationData && (
           <ul>
@@ -84,10 +84,10 @@ const DeviceOrientationLogics = () => {
             </li>
             <li>Rotation Rate: {JSON.stringify(motionData.rotationRate)}</li>
           </ul>
-        )} */}
-      <button id="request">Request Permission</button>
-      <SphereScene orientationData={orientationData} />
-      {/* </div> */}
+        )}
+        <button id="request">Request Permission</button>
+        <SphereScene orientationData={orientationData} />
+      </div>
     </div>
   );
 };
