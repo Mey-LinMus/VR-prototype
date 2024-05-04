@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import * as THREE from "three";
+
 const PrototypeOrientation = () => {
   const [orientationData, setOrientationData] = useState(null);
   const [motionData, setMotionData] = useState(null);
@@ -82,6 +83,9 @@ const PrototypeOrientation = () => {
         alert("DeviceMotionEvent is not defined");
       }
     };
+
+    const btn = document.getElementById("request");
+    btn.addEventListener("click", requestPermission);
 
     const handleDeviceOrientation = (event) => {
       const alpha = event.alpha;
