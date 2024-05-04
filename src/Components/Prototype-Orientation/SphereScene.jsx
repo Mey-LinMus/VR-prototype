@@ -66,20 +66,8 @@ const SphereScene = ({ orientationData }) => {
 
     const animate = () => {
       requestAnimationFrame(animate);
-      update();
-      render();
-    };
 
-    const update = () => {
-      if (orientationData) {
-        const { alpha, beta, gamma } = orientationData;
-        targetPosition.current.set(alpha, beta, gamma);
-        targetPosition.current.multiplyScalar(0.1);
-        velocity.current.lerp(targetPosition.current, 0.05);
-        cameraRef.current.position.x = velocity.current.x;
-        cameraRef.current.position.y = velocity.current.y;
-        cameraRef.current.position.z = velocity.current.z;
-      }
+      render();
     };
 
     const render = () => {
@@ -90,13 +78,15 @@ const SphereScene = ({ orientationData }) => {
         sphere.position.x = 5000 * Math.cos(timer + i);
         sphere.position.y = 5000 * Math.sin(timer + i * 1.1);
       }
-      
+
       if (orientationData) {
         const { alpha, beta, gamma } = orientationData;
-        // You need to adjust camera position based on alpha, beta, gamma values
-        camera.position.x = alpha;
-        camera.position.y = beta;
-        camera.position.z = gamma;
+        targetPosition.current.set(alpha, beta, gamma);
+        targetPosition.current.multiplyScalar(0.1);
+        velocity.current.lerp(targetPosition.current, 0.05);
+        cameraRef.current.position.x = velocity.current.x;
+        cameraRef.current.position.y = velocity.current.y;
+        cameraRef.current.position.z = velocity.current.z;
       }
       effect.render(scene, cameraRef.current);
     };
