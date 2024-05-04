@@ -90,6 +90,14 @@ const SphereScene = ({ orientationData }) => {
         sphere.position.x = 5000 * Math.cos(timer + i);
         sphere.position.y = 5000 * Math.sin(timer + i * 1.1);
       }
+      
+      if (orientationData) {
+        const { alpha, beta, gamma } = orientationData;
+        // You need to adjust camera position based on alpha, beta, gamma values
+        camera.position.x = alpha;
+        camera.position.y = beta;
+        camera.position.z = gamma;
+      }
       effect.render(scene, cameraRef.current);
     };
 

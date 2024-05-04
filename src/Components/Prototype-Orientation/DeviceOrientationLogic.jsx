@@ -79,7 +79,7 @@ const DeviceOrientationLogics = () => {
           <ul>
             <li>Acceleration: {JSON.stringify(motionData.acceleration)}</li>
             <li>
-              Acceleration Including Gravity:{" "}
+              Acceleration Including Gravity:
               {JSON.stringify(motionData.accelerationIncludingGravity)}
             </li>
             <li>Rotation Rate: {JSON.stringify(motionData.rotationRate)}</li>
