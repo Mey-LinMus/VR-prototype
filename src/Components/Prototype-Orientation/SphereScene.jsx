@@ -8,6 +8,9 @@ const SphereScene = ({ orientationData }) => {
   const mouseY = useRef(0);
   const spheres = useRef([]);
   const cameraRef = useRef(null);
+  
+  const targetPosition = useRef(new THREE.Vector3());
+  const velocity = useRef(new THREE.Vector3());
 
   useEffect(() => {
     let camera, scene, renderer, effect, directionalLight;
@@ -87,9 +90,22 @@ const SphereScene = ({ orientationData }) => {
     const animate = () => {
       // Recursive animation function
       requestAnimationFrame(animate);
+      update();
       render();
     };
 
+    const update = () => {
+      // Interpolate camera position towards the target position
+      if (orientationData) {
+        const { alpha, beta, gamma } = orientationData;
+        targetPosition.current.set(alpha, beta, gamma); // Update target position
+        targetPosition.current.multiplyScalar(0.1); // Adjust scaling for smoothness
+        velocity.current.lerp(targetPosition.current, 0.05); // Adjust lerping speed for smoothness
+        cameraRef.current.position.x = velocity.current.x;
+        cameraRef.current.position.y = velocity.current.y;
+        cameraRef.current.position.z = velocity.current.z;
+      }
+    };
     const render = () => {
       // Rendering function
       const timer = 0.00001 * Date.now();

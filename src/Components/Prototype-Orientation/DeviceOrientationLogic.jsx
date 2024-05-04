@@ -28,6 +28,7 @@ const DeviceOrientationLogics = () => {
     btn.addEventListener("click", requestPermission);
 
     const handleDeviceOrientation = (event) => {
+      event.preventDefault();
       const alpha = event.alpha; // rotation around the z-axis
       const beta = event.beta; // rotation around the x-axis
       const gamma = event.gamma; // rotation around the y-axis
