@@ -9,9 +9,9 @@ const StereoEffectScene = () => {
     let manager; // Declare manager variable
 
     const init = () => {
+      let directionalLight;
       manager = new ThreeClassSceneManager(containerRef); // Instantiate ThreeSceneManager
       const scene = manager.getScene(); // Get the scene from ThreeSceneManager
-      const camera = manager.getCamera(); // Get the camera from ThreeSceneManager
 
       // Create sphere geometry and material
       const geometry = new THREE.SphereGeometry(150);
@@ -23,6 +23,14 @@ const StereoEffectScene = () => {
         emissive: new THREE.Color(0x5391f5),
         fog: true,
       });
+
+      // Creating a directional light
+      directionalLight = new THREE.DirectionalLight(0xffffff, 6);
+      directionalLight.position.set(1, 1, 1).normalize();
+      scene.add(directionalLight);
+      const pointLight = new THREE.PointLight(0xffffff, 2);
+      pointLight.position.set(1, 5, 0);
+      scene.add(pointLight);
 
       // Add spheres to the scene
       const spheres = [];
