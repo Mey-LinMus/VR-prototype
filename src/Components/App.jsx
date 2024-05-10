@@ -1,10 +1,10 @@
 import React from "react";
-import PrototypeOrientation from "./Prototype-Orientation/PrototypeOrientation";
+import SphereAnimation from "./Test/Class/SphereAnimation";
 
 function App() {
   return (
     <div className="App">
-      <PrototypeOrientation />
+      <SphereAnimation />
     </div>
   );
 }
