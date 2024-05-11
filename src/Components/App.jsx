@@ -1,10 +1,10 @@
 import React from "react";
-import SphereAnimation from "./Test/Class/SphereAnimation";
+import Particles from "./Test/Class/Particles";
 
 function App() {
   return (
     <div className="App">
-      <SphereAnimation />
+      <Particles />
     </div>
   );
 }
