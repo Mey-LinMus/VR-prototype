@@ -15,23 +15,25 @@ const ParticlesComponent = () => {
     const positions = new Float32Array(count * 3);
     const colors = new Float32Array(count * 3);
 
-    // Parameters for the tunnel
-    const radius = 10; // Radius of the tunnel
-    const segments = 500; // Number of segments along the tunnel
-    const height = 30; // Height of the tunnel
+    // Parameters for the cylindrical shape
+    const radius = 10; // Radius of the cylinder
+    const segments = 100; // Number of segments along the circumference of the cylinder
+    const height = 30; // Height of the cylinder
 
     for (let i = 0; i < count; i++) {
-      // Randomly select a segment along the tunnel
+      // Randomly select a segment along the height of the cylinder
       const t = Math.random();
-      const angle = t * Math.PI * 2;
-      const y = (Math.random() - 0.5) * height;
+      const y = t * height - height / 2;
+
+      // Randomly select an angle along the circumference of the cylinder
+      const angle = Math.random() * Math.PI * 2;
 
       // Calculate the position based on cylindrical coordinates
       const x = Math.cos(angle) * radius;
       const z = Math.sin(angle) * radius;
 
       // Index calculation for position and color arrays
-      const index = i * 3; // Corrected index calculation
+      const index = i * 3;
 
       // Set the position and color for the particle
       positions[index] = x;
@@ -67,8 +69,10 @@ const ParticlesComponent = () => {
       0.1,
       100
     );
-    camera.position.z = 3;
-    scene.add(camera);
+
+    // Position the camera to look into the hole of the cylinder
+    camera.position.set(0, 0, 40);
+    camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
     renderer.setSize(window.innerWidth, window.innerHeight);
