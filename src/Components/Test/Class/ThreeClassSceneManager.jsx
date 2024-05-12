@@ -1,6 +1,8 @@
 import * as THREE from "three";
 import { StereoEffect } from "three/examples/jsm/effects/StereoEffect.js";
 
+
+
 class ThreeClassSceneManager {
   constructor(containerRef, THREEInstance) {
     this.THREE = THREEInstance;

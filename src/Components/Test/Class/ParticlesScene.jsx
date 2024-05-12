@@ -27,8 +27,7 @@ const CustomGeometryParticles = (props) => {
   }, [count]);
 
   // Use the useFrame hook to update the animation of the particles
-  useFrame((state) => {
-    const { clock } = state;
+  useFrame(() => {
     const speed = 0.5; // Adjust falling speed
 
     // Loop through each particle and update its position based on falling animation
