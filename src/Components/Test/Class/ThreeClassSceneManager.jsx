@@ -1,8 +1,6 @@
 import * as THREE from "three";
 import { StereoEffect } from "three/examples/jsm/effects/StereoEffect.js";
 
-
-
 class ThreeClassSceneManager {
   constructor(containerRef, THREEInstance) {
     this.THREE = THREEInstance;
@@ -16,6 +14,7 @@ class ThreeClassSceneManager {
 
     this.init();
     this.setupEventListeners();
+    this.addStereoDivider();
   }
 
   init() {
@@ -73,6 +72,20 @@ class ThreeClassSceneManager {
 
   getEffect() {
     return this.effect;
+  }
+
+  addStereoDivider() {
+    const geometry = new this.THREE.BufferGeometry();
+    const vertices = new Float32Array([0, -10000, 10000, 0]);
+    geometry.setAttribute(
+      "position",
+      new this.THREE.BufferAttribute(vertices, 3)
+    );
+
+    const material = new this.THREE.LineBasicMaterial({ color: 0xffffff });
+    const line = new this.THREE.Line(geometry, material);
+
+    this.scene.add(line);
   }
 }
 
