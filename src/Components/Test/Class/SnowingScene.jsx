@@ -68,7 +68,7 @@ const SnowingScene = () => {
     const snowdropMaterial = new THREE.PointsMaterial({
       map: snowdropTexture, // Apply the texture to the points
       color: 0xfffafa,
-      size: 100,
+      size: 60,
       blending: THREE.AdditiveBlending,
       transparent: 0.05,
     });
