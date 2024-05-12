@@ -2,8 +2,9 @@ import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
 import ThreeClassSceneManager from "./ThreeClassSceneManager";
 import { Sky } from "three/examples/jsm/objects/Sky.js";
+import snowdropTextureImg from "./Texture/snowflake1.png"; // Rename import variable
 
-const ParticleScene = () => {
+const SnowingScene = () => {
   const containerRef = useRef(null);
   useEffect(() => {
     const sceneManager = new ThreeClassSceneManager(containerRef, THREE);
@@ -21,8 +22,8 @@ const ParticleScene = () => {
     sun = new THREE.Vector3();
 
     const effectController = {
-      turbidity: 10,
-      rayleigh: 3,
+      turbidity: 0,
+      rayleigh: 0.165,
       mieCoefficient: 0.005,
       mieDirectionalG: 0.7,
       elevation: 2,
@@ -48,7 +49,7 @@ const ParticleScene = () => {
 
     updateSky();
 
-    // Creating raindrop particles
+    // Creating snowdrop particles
     const particleCount = 5000;
     const positions = new Float32Array(particleCount * 3);
     for (let i = 0; i < positions.length; i += 3) {
@@ -58,9 +59,15 @@ const ParticleScene = () => {
     }
     const particles = new THREE.BufferGeometry();
     particles.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+
+    // Load raindrop texture
+    const textureLoader = new THREE.TextureLoader();
+    const snowdropTexture = textureLoader.load(snowdropTextureImg); // Use imported variable here
+
     const raindropMaterial = new THREE.PointsMaterial({
-      color: 0x55aaff,
-      size: 20,
+      map: snowdropTexture, // Apply the texture to the points
+      color: 0xffffff,
+      size: 50,
       blending: THREE.AdditiveBlending,
       transparent: 0.5,
     });
@@ -72,12 +79,15 @@ const ParticleScene = () => {
       for (let i = 0; i < positions.length; i += 3) {
         positions[i + 1] -= 10;
         if (positions[i + 1] < -3000) {
-          positions[i] = Math.random() * 6000 - 3000;
-          positions[i + 1] = Math.random() * 6000 + 3000;
-          positions[i + 2] = Math.random() * 6000 - 3000;
+          positions[i] = Math.random() * 7000 - 3000;
+          positions[i + 1] = Math.random() * 7000 + 3000;
+          positions[i + 2] = Math.random() * 7000 - 3000;
         }
       }
-      particles.setAttribute("position", new THREE.BufferAttribute(positions, 3));
+      particles.setAttribute(
+        "position",
+        new THREE.BufferAttribute(positions, 3)
+      );
       renderer.render(scene, camera);
     };
     animate();
@@ -90,4 +100,4 @@ const ParticleScene = () => {
   return <div ref={containerRef} />;
 };
 
-export default ParticleScene;
+export default SnowingScene;

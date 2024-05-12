@@ -9,3 +9,6 @@
 - https://itnext.io/gyro-web-accessing-the-device-orientation-in-javascript-387da43eeb84
 
 - https://blog.maximeheckel.com/posts/the-magical-world-of-particles-with-react-three-fiber-and-shaders/
+- https://github.com/mrdoob/three.js/blob/master/examples/webgl_shaders_sky.html
+- https://threejs.org/examples/#webgl_shaders_sky
+- https://sbcode.net/threejs
