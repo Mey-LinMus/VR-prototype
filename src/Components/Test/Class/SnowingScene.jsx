@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
 import ThreeClassSceneManager from "./ThreeClassSceneManager";
 import { Sky } from "three/examples/jsm/objects/Sky.js";
-import snowdropTextureImg from "./Texture/snowflake1.png"; 
+import snowdropTextureImg from "./Texture/snowflake1.png";
 
 const SnowingScene = () => {
   const containerRef = useRef(null);
@@ -11,6 +11,7 @@ const SnowingScene = () => {
     const scene = sceneManager.getScene();
     const camera = sceneManager.getCamera();
     const renderer = sceneManager.getRenderer();
+    const effect = sceneManager.getEffect(); // Get stereo effect from scene manager
 
     let sky, sun;
 
@@ -60,24 +61,24 @@ const SnowingScene = () => {
     const particles = new THREE.BufferGeometry();
     particles.setAttribute("position", new THREE.BufferAttribute(positions, 3));
 
-    // Load raindrop texture
+    // Load snowdrop texture
     const textureLoader = new THREE.TextureLoader();
     const snowdropTexture = textureLoader.load(snowdropTextureImg); // Use imported variable here
 
-    const raindropMaterial = new THREE.PointsMaterial({
+    const snowdropMaterial = new THREE.PointsMaterial({
       map: snowdropTexture, // Apply the texture to the points
       color: 0xfffafa,
       size: 50,
       blending: THREE.AdditiveBlending,
       transparent: 0.05,
     });
-    const raindrops = new THREE.Points(particles, raindropMaterial);
-    scene.add(raindrops);
+    const snowflakes = new THREE.Points(particles, snowdropMaterial);
+    scene.add(snowflakes);
 
     const animate = () => {
       requestAnimationFrame(animate);
       for (let i = 0; i < positions.length; i += 3) {
-        positions[i + 1] -= 5;
+        positions[i + 1] -= 5; // Adjust the falling speed here if needed
         if (positions[i + 1] < -3000) {
           positions[i] = Math.random() * 7000 - 3000;
           positions[i + 1] = Math.random() * 7000 + 3000;
@@ -88,7 +89,8 @@ const SnowingScene = () => {
         "position",
         new THREE.BufferAttribute(positions, 3)
       );
-      renderer.render(scene, camera);
+      // Use stereo effect to render the scene
+      effect.render(scene, camera);
     };
     animate();
 
