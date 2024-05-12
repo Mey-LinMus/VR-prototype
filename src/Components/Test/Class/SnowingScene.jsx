@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
 import ThreeClassSceneManager from "./ThreeClassSceneManager";
 import { Sky } from "three/examples/jsm/objects/Sky.js";
-import snowdropTextureImg from "./Texture/snowflake1.png"; // Rename import variable
+import snowdropTextureImg from "./Texture/snowflake1.png"; 
 
 const SnowingScene = () => {
   const containerRef = useRef(null);
@@ -66,10 +66,10 @@ const SnowingScene = () => {
 
     const raindropMaterial = new THREE.PointsMaterial({
       map: snowdropTexture, // Apply the texture to the points
-      color: 0xffffff,
+      color: 0xfffafa,
       size: 50,
       blending: THREE.AdditiveBlending,
-      transparent: 0.5,
+      transparent: 0.05,
     });
     const raindrops = new THREE.Points(particles, raindropMaterial);
     scene.add(raindrops);
@@ -77,7 +77,7 @@ const SnowingScene = () => {
     const animate = () => {
       requestAnimationFrame(animate);
       for (let i = 0; i < positions.length; i += 3) {
-        positions[i + 1] -= 10;
+        positions[i + 1] -= 5;
         if (positions[i + 1] < -3000) {
           positions[i] = Math.random() * 7000 - 3000;
           positions[i + 1] = Math.random() * 7000 + 3000;
