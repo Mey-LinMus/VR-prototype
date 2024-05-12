@@ -68,7 +68,7 @@ const SnowingScene = () => {
     const snowdropMaterial = new THREE.PointsMaterial({
       map: snowdropTexture, // Apply the texture to the points
       color: 0xfffafa,
-      size: 50,
+      size: 100,
       blending: THREE.AdditiveBlending,
       transparent: 0.05,
     });
@@ -78,7 +78,7 @@ const SnowingScene = () => {
     const animate = () => {
       requestAnimationFrame(animate);
       for (let i = 0; i < positions.length; i += 3) {
-        positions[i + 1] -= 5; // Adjust the falling speed here if needed
+        positions[i + 1] -= 5; 
         if (positions[i + 1] < -3000) {
           positions[i] = Math.random() * 7000 - 3000;
           positions[i + 1] = Math.random() * 7000 + 3000;
