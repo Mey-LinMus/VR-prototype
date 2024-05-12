@@ -13,6 +13,8 @@ const StereoEffectScene = () => {
       manager = new ThreeClassSceneManager(containerRef); // Instantiate ThreeSceneManager
       const scene = manager.getScene(); // Get the scene from ThreeSceneManager
 
+      scene.background = new THREE.Color(0x011c47);
+      
       // Create sphere geometry and material
       const geometry = new THREE.SphereGeometry(150);
       const material = new THREE.MeshStandardMaterial({

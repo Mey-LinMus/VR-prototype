@@ -2,7 +2,8 @@ import * as THREE from "three";
 import { StereoEffect } from "three/examples/jsm/effects/StereoEffect.js";
 
 class ThreeClassSceneManager {
-  constructor(containerRef) {
+  constructor(containerRef, THREEInstance) {
+    this.THREE = THREEInstance;
     this.containerRef = containerRef;
     this.mouseX = 0;
     this.mouseY = 0;
@@ -18,6 +19,7 @@ class ThreeClassSceneManager {
   init() {
     const container = this.containerRef.current;
     // Creating a perspective camera
+    console.log(container);
     this.camera = new THREE.PerspectiveCamera(
       60,
       window.innerWidth / window.innerHeight,
@@ -27,8 +29,7 @@ class ThreeClassSceneManager {
     this.camera.position.z = 3200;
     // Creating a scene
     this.scene = new THREE.Scene();
-    // Loading a cube texture as background
-    this.scene.background = new THREE.Color(0x011c47);
+
     // Creating a WebGL renderer
     this.renderer = new THREE.WebGLRenderer();
     this.renderer.setPixelRatio(window.devicePixelRatio);
