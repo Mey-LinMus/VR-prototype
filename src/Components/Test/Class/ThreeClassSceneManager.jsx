@@ -14,7 +14,7 @@ class ThreeClassSceneManager {
 
     this.init();
     this.setupEventListeners();
-    this.addStereoDivider();
+   
   }
 
   init() {
@@ -74,19 +74,7 @@ class ThreeClassSceneManager {
     return this.effect;
   }
 
-  addStereoDivider() {
-    const geometry = new this.THREE.BufferGeometry();
-    const vertices = new Float32Array([0, -10000, 10000, 0]);
-    geometry.setAttribute(
-      "position",
-      new this.THREE.BufferAttribute(vertices, 3)
-    );
 
-    const material = new this.THREE.LineBasicMaterial({ color: 0xffffff });
-    const line = new this.THREE.Line(geometry, material);
-
-    this.scene.add(line);
-  }
 }
 
 export default ThreeClassSceneManager;
