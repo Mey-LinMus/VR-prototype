@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
 import ThreeClassSceneManager from "./ThreeClassSceneManager";
-
+import { Html } from "@react-three/drei";
 
 const ParticleScene = () => {
   const containerRef = useRef(null);
@@ -70,9 +70,13 @@ const ParticleScene = () => {
     return () => {
       // Clean up Three.js resources if needed
     };
-  }, []);
+  }, [containerRef]);
 
-  return <div ref={containerRef} />;
+  return (
+    <Html>
+      <div ref={containerRef} />;
+    </Html>
+  );
 };
 
 export default ParticleScene;
