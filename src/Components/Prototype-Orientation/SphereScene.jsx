@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { StereoEffect } from "three/examples/jsm/effects/StereoEffect.js";
 
@@ -6,6 +6,7 @@ const SphereScene = ({ orientationData }) => {
   const containerRef = useRef(null);
   const spheres = useRef([]);
   const cameraRef = useRef(null);
+  const [consoleLogs, setConsoleLogs] = useState([]);
 
   useEffect(() => {
     let camera, scene, renderer, effect, directionalLight;
@@ -65,9 +66,7 @@ const SphereScene = ({ orientationData }) => {
       window.addEventListener("resize", onWindowResize);
 
       // Call handleDeviceOrientation function when deviceorientation event is fired
-      window.addEventListener("deviceorientation", (event) => {
-        console.log("Device orientation event fired:", event);
-      });
+      window.addEventListener("deviceorientation", handleDeviceOrientation);
     };
 
     const onWindowResize = () => {
@@ -79,7 +78,6 @@ const SphereScene = ({ orientationData }) => {
 
     const animate = () => {
       requestAnimationFrame(animate);
-
       render();
     };
 
@@ -101,20 +99,20 @@ const SphereScene = ({ orientationData }) => {
       // Calculate rotation based on device orientation
       const beta = event.beta || 0; // rotation around x-axis (in degrees)
       const gamma = event.gamma || 0; // rotation around y-axis (in degrees)
-      console.log("Beta", beta, "Gamma", gamma);
 
       // Adjusting beta and gamma to fit the right-handed coordinate system
       const adjustedBeta = -beta; // Inverting beta to match the right-handed system
       const adjustedGamma = -gamma; // Inverting gamma to match the right-handed system
 
-      // // Set camera rotation based on adjusted device orientation
+      // Update consoleLogs state with new logs
+      setConsoleLogs([
+        ...consoleLogs,
+        `Beta: ${beta}, Gamma: ${gamma}, Adjusted Beta: ${adjustedBeta}, Adjusted Gamma: ${adjustedGamma}`,
+      ]);
+
+      // Set camera rotation based on adjusted device orientation
       cameraRef.current.rotation.x = THREE.MathUtils.degToRad(adjustedBeta);
       cameraRef.current.rotation.y = THREE.MathUtils.degToRad(adjustedGamma);
-
-      cameraRef.current.rotation.set(beta, gamma);
-
-      console.log("Camera x:", cameraRef.current.rotation.x);
-      console.log("Camera y:", cameraRef.current.rotation.y);
     };
 
     init();
@@ -122,11 +120,7 @@ const SphereScene = ({ orientationData }) => {
 
     return () => {
       window.removeEventListener("resize", onWindowResize);
-      window.removeEventListener(
-        "deviceorientation",
-        handleDeviceOrientation,
-        true
-      );
+      window.removeEventListener("deviceorientation", handleDeviceOrientation);
       containerRef.current.removeChild(renderer.domElement);
     };
   }, [orientationData]);
@@ -138,6 +132,11 @@ const SphereScene = ({ orientationData }) => {
         id="info"
         style={{ overflow: "hidden", width: "100%", height: "100%", margin: 0 }}
       ></div>
+      <div>
+        {consoleLogs.map((log, index) => (
+          <p key={index}>{log}</p>
+        ))}
+      </div>
     </div>
   );
 };
