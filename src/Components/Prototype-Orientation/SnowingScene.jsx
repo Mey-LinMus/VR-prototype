@@ -82,7 +82,7 @@ const SnowingScene = ({ orientationData }) => {
 
     const snowflakes = new THREE.Points(particles, snowdropMaterial);
     scene.add(snowflakes);
-    
+
     const onWindowResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
@@ -108,15 +108,20 @@ const SnowingScene = ({ orientationData }) => {
         const { alpha, beta, gamma } = orientationData;
         targetPosition.current.set(alpha, beta, gamma);
         targetPosition.current.multiplyScalar(0.1);
-        velocity.current.lerp(targetPosition.current, 0.05);
-        cameraRef.current.position.x = velocity.current.x;
-        cameraRef.current.position.y = velocity.current.y;
-        cameraRef.current.position.z = velocity.current.z;
+        velocity.current.lerp(targetPosition.current, 0.1); // Adjust the lerp factor for smoothing
+        cameraRef.current.position.x +=
+          (velocity.current.x - cameraRef.current.position.x) * 0.1; // Adjust the lerp factor for smoothing
+        cameraRef.current.position.y +=
+          (velocity.current.y - cameraRef.current.position.y) * 0.1; // Adjust the lerp factor for smoothing
+        cameraRef.current.position.z +=
+          (velocity.current.z - cameraRef.current.position.z) * 0.1; // Adjust the lerp factor for smoothing
       }
+
+      // Render the scene
       effect.render(scene, cameraRef.current);
 
       // Use stereo effect to render the scene
-      effect.render(scene, camera);
+      // effect.render(scene, camera);
     };
     animate();
 
