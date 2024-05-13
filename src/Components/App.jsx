@@ -1,11 +1,13 @@
 import React from "react";
-import Particles from "./Prototype-Orientation/SnowingScene";
-// import * as THREE from "three";
+// import SnowingScene from "./Prototype-Orientation/SnowingScene";
+import SphereScene from "./Prototype-Orientation/SphereScene";
+
 
 function App() {
   return (
     <div className="App">
-      <Particles />
+      {/* <SnowingScene /> */}
+      <SphereScene /> 
     </div>
   );
 }
