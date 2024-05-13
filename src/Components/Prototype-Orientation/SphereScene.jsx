@@ -149,7 +149,7 @@ const SphereScene = ({ orientationData }) => {
 
   return (
     <div>
-      <button id="request">Request Permission</button>
+      <button id="request">Request Permission 😋</button>
       <div
         ref={containerRef}
         id="info"
