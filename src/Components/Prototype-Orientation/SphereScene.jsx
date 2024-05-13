@@ -9,6 +9,27 @@ const SphereScene = ({ orientationData }) => {
   const [consoleLogs, setConsoleLogs] = useState([]);
 
   useEffect(() => {
+    const requestPermission = () => {
+      if (
+        typeof DeviceOrientationEvent !== "undefined" &&
+        typeof DeviceOrientationEvent.requestPermission === "function"
+      ) {
+        DeviceOrientationEvent.requestPermission()
+          .then((response) => {
+            if (response === "granted") {
+              window.addEventListener("devicemotion", (e) => {
+                // Handle 'e' here (e.g., update UI based on motion data)
+              });
+            }
+          })
+          .catch(console.error);
+      } else {
+        alert("DeviceMotionEvent is not defined");
+      }
+    };
+    const btn = document.getElementById("request");
+    btn.addEventListener("click", requestPermission);
+
     let camera, scene, renderer, effect, directionalLight;
 
     const init = () => {
@@ -117,6 +138,7 @@ const SphereScene = ({ orientationData }) => {
 
     init();
     animate();
+    requestPermission();
 
     return () => {
       window.removeEventListener("resize", onWindowResize);
@@ -127,6 +149,7 @@ const SphereScene = ({ orientationData }) => {
 
   return (
     <div>
+      <button id="request">Request Permission</button>
       <div
         ref={containerRef}
         id="info"
