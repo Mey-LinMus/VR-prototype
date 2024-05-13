@@ -20,16 +20,23 @@ const SphereScene = ({ orientationData }) => {
         1,
         100000
       );
-      camera.position.z = 3200;
+
       cameraRef.current = camera;
+
+      // set the camera's position in the scene
+      camera.position.set(0, 0, 0);
+
       scene = new THREE.Scene();
+
       scene.background = new THREE.Color(0x011c47);
       directionalLight = new THREE.DirectionalLight(0xffffff, 6);
       directionalLight.position.set(1, 1, 1).normalize();
       scene.add(directionalLight);
+
       const pointLight = new THREE.PointLight(0xffffff, 2);
       pointLight.position.set(1, 5, 0);
       scene.add(pointLight);
+
       const geometry = new THREE.SphereGeometry(150);
       const material = new THREE.MeshStandardMaterial({
         color: new THREE.Color(0x5391f5),
@@ -39,6 +46,7 @@ const SphereScene = ({ orientationData }) => {
         emissive: new THREE.Color(0x5391f5),
         fog: true,
       });
+
       for (let i = 0; i < 200; i++) {
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.x = Math.random() * 10000 - 5000;
@@ -48,10 +56,12 @@ const SphereScene = ({ orientationData }) => {
         scene.add(mesh);
         spheres.current.push(mesh);
       }
+
       renderer = new THREE.WebGLRenderer();
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(window.innerWidth, window.innerHeight);
       container.appendChild(renderer.domElement);
+
       effect = new StereoEffect(renderer);
       effect.setSize(window.innerWidth, window.innerHeight);
       window.addEventListener("resize", onWindowResize);
@@ -81,12 +91,17 @@ const SphereScene = ({ orientationData }) => {
 
       if (orientationData) {
         const { alpha, beta, gamma } = orientationData;
+
         targetPosition.current.set(alpha, beta, gamma);
         targetPosition.current.multiplyScalar(0.1);
+
         velocity.current.lerp(targetPosition.current, 0.05);
-        cameraRef.current.position.x = velocity.current.x;
-        cameraRef.current.position.y = velocity.current.y;
-        cameraRef.current.position.z = velocity.current.z;
+        cameraRef.current.position.x +=
+          (velocity.current.x - cameraRef.current.position.x) * 0.1;
+        cameraRef.current.position.y +=
+          (velocity.current.y - cameraRef.current.position.y) * 0.1;
+        cameraRef.current.position.z +=
+          (velocity.current.z - cameraRef.current.position.z) * 0.1;
       }
       effect.render(scene, cameraRef.current);
     };
