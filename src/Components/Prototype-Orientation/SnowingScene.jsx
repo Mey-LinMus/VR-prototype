@@ -62,7 +62,6 @@ const SnowingScene = () => {
       const theta = THREE.MathUtils.degToRad(effectController.azimuth);
       sun.setFromSphericalCoords(1, phi, theta);
       uniforms["sunPosition"].value.copy(sun);
-      renderer.render(scene, camera);
     }
 
     updateSky();
@@ -105,7 +104,7 @@ const SnowingScene = () => {
         "position",
         new THREE.BufferAttribute(positions, 3)
       );
-      // effect.render(scene, camera);
+      effect.render(scene, camera);
     };
 
     animate();
