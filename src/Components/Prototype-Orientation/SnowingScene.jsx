@@ -1,11 +1,15 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import ThreeClassSceneManager from "./ThreeClassSceneManager";
 import { Sky } from "three/examples/jsm/objects/Sky.js";
 import snowdropTextureImg from "./Texture/snowflake1.png";
+import DeviceOrientationControls from "./DeviceOrientationLogic";
 
 const SnowingScene = () => {
   const containerRef = useRef(null);
+  const [scene, setScene] = useState(null);
+  const [camera, setCamera] = useState(null);
+  const [renderer, setRenderer] = useState(null);
 
   useEffect(() => {
     const sceneManager = new ThreeClassSceneManager(containerRef, THREE);
@@ -14,29 +18,6 @@ const SnowingScene = () => {
     const renderer = sceneManager.getRenderer();
     const effect = sceneManager.getEffect();
     let sky, sun;
-
-    const requestPermission = () => {
-      if (
-        typeof DeviceOrientationEvent !== "undefined" &&
-        typeof DeviceOrientationEvent.requestPermission === "function"
-      ) {
-        DeviceOrientationEvent.requestPermission()
-          .then((response) => {
-            if (response === "granted") {
-              window.addEventListener("devicemotion", (e) => {
-                // Handle 'e' here (e.g., update UI based on motion data)
-              });
-            }
-          })
-          .catch(console.error);
-      } else {
-        alert("DeviceMotionEvent is not defined");
-      }
-    };
-    const btn = document.getElementById("request");
-    btn.addEventListener("click", requestPermission);
-
-    requestPermission();
 
     // Add Sky
     sky = new Sky();
@@ -90,6 +71,10 @@ const SnowingScene = () => {
     const snowflakes = new THREE.Points(particles, snowdropMaterial);
     scene.add(snowflakes);
 
+    setScene(scene);
+    setCamera(camera);
+    setRenderer(renderer);
+
     const animate = () => {
       requestAnimationFrame(animate);
       for (let i = 0; i < positions.length; i += 3) {
@@ -109,33 +94,8 @@ const SnowingScene = () => {
 
     animate();
 
-    // Device Orientation Logic
-    const handleDeviceOrientation = (event) => {
-      const { alpha, beta, gamma } = event;
-
-      // Example: Rotate the camera based on device orientation
-      scene.rotation.x = (beta * Math.PI) / 180; // Convert degrees to radians
-      scene.rotation.y = (gamma * Math.PI) / 180;
-      scene.rotation.z = (alpha * Math.PI) / 180;
-
-      console.log("x", camera.rotation.x);
-      console.log("y", camera.rotation.y);
-      console.log("z", camera.rotation.z);
-      // Render the updated scene
-      renderer.render(scene, camera);
-
-      // You may need to adjust this logic depending on your specific requirements
-    };
-
-    if (window.DeviceOrientationEvent) {
-      window.addEventListener("deviceorientation", handleDeviceOrientation);
-    } else {
-      console.log("Device orientation not supported");
-    }
-
     return () => {
       // Clean up Three.js resources if needed
-      window.removeEventListener("deviceorientation", handleDeviceOrientation);
     };
   }, []);
 
@@ -159,7 +119,16 @@ const SnowingScene = () => {
     <>
       <div ref={containerRef} />
       <button id="request">Request Permission</button>
+      {scene && camera && renderer && (
+        <DeviceOrientationControls
+          camera={camera}
+          renderer={renderer}
+          scene={scene}
+        />
+      )}
+      <button id="request">Request Permission</button>
     </>
   );
 };
+
 export default SnowingScene;
