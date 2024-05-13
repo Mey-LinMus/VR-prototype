@@ -105,8 +105,8 @@ const SnowingScene = ({ orientationData }) => {
       );
 
       if (orientationData) {
-        const { alpha, beta, gamma } = orientationData;
-        targetPosition.current.set(alpha, beta, gamma);
+        const {  beta, gamma } = orientationData;
+        targetPosition.current.set( beta, gamma);
         targetPosition.current.multiplyScalar(0.1);
         velocity.current.lerp(targetPosition.current, 0.1); // Adjust the lerp factor for smoothing
         cameraRef.current.position.x +=

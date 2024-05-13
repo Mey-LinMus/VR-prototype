@@ -1,6 +1,7 @@
 # Source list
 
 - https://www.w3.org/TR/orientation-event/#dom-deviceorientationevent-requestpermission
+- https://w3c.github.io/deviceorientation/spec-source-orientation.html#device-orientation-model
 - https://dev.to/li/how-to-requestpermission-for-devicemotion-and-deviceorientation-events-in-ios-13-46g2
 
 - https://leemartin.dev/how-to-request-device-motion-and-orientation-permission-in-ios-13-74fc9d6cd140

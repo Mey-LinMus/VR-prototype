@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef } from "react";
+import * as THREE from "three";
 
-const DemoOrientation = () => {
-  const [orientationData, setOrientationData] = useState(null);
-  const [motionData, setMotionData] = useState(null);
+const ThreeScene = () => {
+  const canvasRef = useRef(null);
+  let renderer, camera, scene;
 
   useEffect(() => {
     const requestPermission = () => {
@@ -26,68 +27,66 @@ const DemoOrientation = () => {
     const btn = document.getElementById("request");
     btn.addEventListener("click", requestPermission);
 
-    const handleDeviceOrientation = (event) => {
-      const alpha = event.alpha; // rotation around the z-axis
-      const beta = event.beta; // rotation around the x-axis
-      const gamma = event.gamma; // rotation around the y-axis
-      setOrientationData({ alpha, beta, gamma });
-
-      // Use the orientation data as needed
-    };
-
-    const handleDeviceMotion = (event) => {
-      const acceleration = event.acceleration; // Acceleration data
-      const accelerationIncludingGravity = event.accelerationIncludingGravity; // Acceleration data including gravity
-      const rotationRate = event.rotationRate; // Device rotation rate
-
-      // Use the motion data as needed
-      setMotionData({
-        acceleration,
-        accelerationIncludingGravity,
-        rotationRate,
-      });
-    };
-
-    window.addEventListener("deviceorientation", handleDeviceOrientation, true);
-    window.addEventListener("devicemotion", handleDeviceMotion, true);
-
     requestPermission();
+    // Initialize Three.js scene
+    initScene();
 
+    // Start listening for device orientation changes
+    window.addEventListener("deviceorientation", handleDeviceOrientation);
+
+    // Clean up event listener on unmount
     return () => {
       window.removeEventListener("deviceorientation", handleDeviceOrientation);
-      window.removeEventListener("devicemotion", handleDeviceMotion);
     };
   }, []);
 
+  const initScene = () => {
+    // Set up renderer
+    renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+    // Set up camera
+    camera = new THREE.PerspectiveCamera(
+      75,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    camera.position.z = 5;
+
+    // Set up scene
+    scene = new THREE.Scene();
+
+    // Add objects to the scene
+    const geometry = new THREE.BoxGeometry();
+    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+    const cube = new THREE.Mesh(geometry, material);
+    scene.add(cube);
+
+    // Render the scene
+    renderer.render(scene, camera);
+  };
+
+  const handleDeviceOrientation = (event) => {
+    // Update scene based on device orientation
+    const { alpha, beta, gamma } = event;
+
+    // Example: Rotate cube based on device orientation
+    scene.rotation.x = (beta * Math.PI) / 180; // Convert degrees to radians
+    scene.rotation.y = (gamma * Math.PI) / 180;
+    scene.rotation.z = (alpha * Math.PI) / 180;
+
+    // Render the updated scene
+    renderer.render(scene, camera);
+  };
+
   return (
-    <div>
-      <h1>Device Orientation & Motion Demo 🤓</h1>
-      <div>
-        <h2>Orientation Data</h2>
-        {orientationData && (
-          <ul>
-            <li>Alpha: {orientationData.alpha}</li>
-            <li>Beta: {orientationData.beta}</li>
-            <li>Gamma: {orientationData.gamma}</li>
-          </ul>
-        )}
-      </div>
-      <div>
-        <h2>Motion Data</h2>
-        {motionData && (
-          <ul>
-            <li>Acceleration: {JSON.stringify(motionData.acceleration)}</li>
-            <li>
-              Acceleration Including Gravity:{" "}
-              {JSON.stringify(motionData.accelerationIncludingGravity)}
-            </li>
-            <li>Rotation Rate: {JSON.stringify(motionData.rotationRate)}</li>
-          </ul>
-        )}
-        <button id="request">Request Permission</button>
-      </div>
-    </div>
+    <>
+      {" "}
+      <canvas ref={canvasRef} />{" "}
+      <button id="request">Request Permission</button>
+    </>
   );
 };
 
-export default DemoOrientation;
+export default ThreeScene;
