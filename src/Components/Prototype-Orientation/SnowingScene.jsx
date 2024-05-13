@@ -1,34 +1,48 @@
 import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
-import ThreeClassSceneManager from "../Test/Class/ThreeClassSceneManager";
+import ThreeClassSceneManager from "./ThreeClassSceneManager";
 import { Sky } from "three/examples/jsm/objects/Sky.js";
 import snowdropTextureImg from "./Texture/snowflake1.png";
 
-const SnowingScene = ({ orientationData }) => {
-  const cameraRef = useRef(null);
-  const targetPosition = useRef(new THREE.Vector3());
-  const velocity = useRef(new THREE.Vector3());
-
+const SnowingScene = () => {
   const containerRef = useRef(null);
+
   useEffect(() => {
     const sceneManager = new ThreeClassSceneManager(containerRef, THREE);
     const scene = sceneManager.getScene();
     const camera = sceneManager.getCamera();
     const renderer = sceneManager.getRenderer();
-    const effect = sceneManager.getEffect(); // Get stereo effect from scene manager
-
+    const effect = sceneManager.getEffect();
     let sky, sun;
+
+    const requestPermission = () => {
+      if (
+        typeof DeviceOrientationEvent !== "undefined" &&
+        typeof DeviceOrientationEvent.requestPermission === "function"
+      ) {
+        DeviceOrientationEvent.requestPermission()
+          .then((response) => {
+            if (response === "granted") {
+              window.addEventListener("devicemotion", (e) => {
+                // Handle 'e' here (e.g., update UI based on motion data)
+              });
+            }
+          })
+          .catch(console.error);
+      } else {
+        alert("DeviceMotionEvent is not defined");
+      }
+    };
+    const btn = document.getElementById("request");
+    btn.addEventListener("click", requestPermission);
+
+    requestPermission();
 
     // Add Sky
     sky = new Sky();
     sky.scale.setScalar(450000);
     scene.add(sky);
-
     sun = new THREE.Vector3();
-
-    camera.position.z = 3200;
-    cameraRef.current = camera;
-
     const effectController = {
       turbidity: 0,
       rayleigh: 0.165,
@@ -44,14 +58,10 @@ const SnowingScene = ({ orientationData }) => {
       uniforms["rayleigh"].value = effectController.rayleigh;
       uniforms["mieCoefficient"].value = effectController.mieCoefficient;
       uniforms["mieDirectionalG"].value = effectController.mieDirectionalG;
-
       const phi = THREE.MathUtils.degToRad(90 - effectController.elevation);
       const theta = THREE.MathUtils.degToRad(effectController.azimuth);
-
       sun.setFromSphericalCoords(1, phi, theta);
-
       uniforms["sunPosition"].value.copy(sun);
-
       renderer.render(scene, camera);
     }
 
@@ -71,7 +81,6 @@ const SnowingScene = ({ orientationData }) => {
     // Load snowdrop texture
     const textureLoader = new THREE.TextureLoader();
     const snowdropTexture = textureLoader.load(snowdropTextureImg); // Use imported variable here
-
     const snowdropMaterial = new THREE.PointsMaterial({
       map: snowdropTexture, // Apply the texture to the points
       color: 0xfffafa,
@@ -79,16 +88,9 @@ const SnowingScene = ({ orientationData }) => {
       blending: THREE.AdditiveBlending,
       transparent: 0.05,
     });
-
     const snowflakes = new THREE.Points(particles, snowdropMaterial);
     scene.add(snowflakes);
 
-    const onWindowResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      effect.setSize(window.innerWidth, window.innerHeight);
-    };
     const animate = () => {
       requestAnimationFrame(animate);
       for (let i = 0; i < positions.length; i += 3) {
@@ -103,35 +105,46 @@ const SnowingScene = ({ orientationData }) => {
         "position",
         new THREE.BufferAttribute(positions, 3)
       );
-
-      if (orientationData) {
-        const {  beta, gamma } = orientationData;
-        targetPosition.current.set( beta, gamma);
-        targetPosition.current.multiplyScalar(0.1);
-        velocity.current.lerp(targetPosition.current, 0.1); // Adjust the lerp factor for smoothing
-        cameraRef.current.position.x +=
-          (velocity.current.x - cameraRef.current.position.x) * 0.1; // Adjust the lerp factor for smoothing
-        cameraRef.current.position.y +=
-          (velocity.current.y - cameraRef.current.position.y) * 0.1; // Adjust the lerp factor for smoothing
-        cameraRef.current.position.z +=
-          (velocity.current.z - cameraRef.current.position.z) * 0.1; // Adjust the lerp factor for smoothing
-      }
-
-      // Render the scene
-      effect.render(scene, cameraRef.current);
-
-      // Use stereo effect to render the scene
       // effect.render(scene, camera);
     };
+
     animate();
 
-    return () => {
-      window.removeEventListener("resize", onWindowResize);
-      containerRef.current.removeChild(renderer.domElement);
+    // Device Orientation Logic
+    const handleDeviceOrientation = (event) => {
+      const { alpha, beta, gamma } = event;
+
+      // Example: Rotate the camera based on device orientation
+      scene.rotation.x = (beta * Math.PI) / 180; // Convert degrees to radians
+      scene.rotation.y = (gamma * Math.PI) / 180;
+      scene.rotation.z = (alpha * Math.PI) / 180;
+
+      console.log("x", camera.rotation.x);
+      console.log("y", camera.rotation.y);
+      console.log("z", camera.rotation.z);
+      // Render the updated scene
+      renderer.render(scene, camera);
+
+      // You may need to adjust this logic depending on your specific requirements
     };
-  }, [orientationData]);
 
-  return <div ref={containerRef} />;
+    if (window.DeviceOrientationEvent) {
+      window.addEventListener("deviceorientation", handleDeviceOrientation);
+    } else {
+      console.log("Device orientation not supported");
+    }
+
+    return () => {
+      // Clean up Three.js resources if needed
+      window.removeEventListener("deviceorientation", handleDeviceOrientation);
+    };
+  }, []);
+
+  return (
+    <>
+      <div ref={containerRef} />
+      <button id="request">Request Permission</button>
+    </>
+  );
 };
-
 export default SnowingScene;

@@ -1,5 +1,5 @@
 import React from "react";
-import Particles from "./Test/DemoOrientation";
+import Particles from "./Prototype-Orientation/SnowingScene";
 // import * as THREE from "three";
 
 function App() {
