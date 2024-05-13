@@ -118,7 +118,6 @@ const SnowingScene = () => {
   return (
     <>
       <div ref={containerRef} />
-      <button id="request">Request Permission</button>
       {scene && camera && renderer && (
         <DeviceOrientationControls
           camera={camera}
@@ -126,7 +125,6 @@ const SnowingScene = () => {
           scene={scene}
         />
       )}
-      <button id="request">Request Permission</button>
     </>
   );
 };

@@ -39,10 +39,7 @@ const DeviceOrientationControls = ({ camera, renderer, scene }) => {
       // You may need to adjust this logic depending on your specific requirements
     };
 
-    const btn = document.getElementById("request");
-    btn.addEventListener("click", requestPermission);
-
-    requestPermission();
+    requestPermission(); // Automatically request permission when the component mounts
 
     return () => {
       // Clean up event listener
