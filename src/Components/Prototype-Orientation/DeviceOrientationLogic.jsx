@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import SphereScene from "./SphereScene";
+import SphereScene from "./SnowingScene";
 
 const DeviceOrientationLogics = () => {
   const [orientationData, setOrientationData] = useState(null);
@@ -26,8 +26,6 @@ const DeviceOrientationLogics = () => {
     };
     const btn = document.getElementById("request");
     btn.addEventListener("click", requestPermission);
-
-
 
     const handleDeviceOrientation = (event) => {
       event.preventDefault();

@@ -1,10 +1,14 @@
 import React, { useRef, useEffect } from "react";
 import * as THREE from "three";
-import ThreeClassSceneManager from "./ThreeClassSceneManager";
+import ThreeClassSceneManager from "../Test/Class/ThreeClassSceneManager";
 import { Sky } from "three/examples/jsm/objects/Sky.js";
 import snowdropTextureImg from "./Texture/snowflake1.png";
 
-const SnowingScene = () => {
+const SnowingScene = ({ orientationData }) => {
+  const cameraRef = useRef(null);
+  const targetPosition = useRef(new THREE.Vector3());
+  const velocity = useRef(new THREE.Vector3());
+
   const containerRef = useRef(null);
   useEffect(() => {
     const sceneManager = new ThreeClassSceneManager(containerRef, THREE);
@@ -21,6 +25,9 @@ const SnowingScene = () => {
     scene.add(sky);
 
     sun = new THREE.Vector3();
+
+    camera.position.z = 3200;
+    cameraRef.current = camera;
 
     const effectController = {
       turbidity: 0,
@@ -72,13 +79,20 @@ const SnowingScene = () => {
       blending: THREE.AdditiveBlending,
       transparent: 0.05,
     });
+
     const snowflakes = new THREE.Points(particles, snowdropMaterial);
     scene.add(snowflakes);
-
+    
+    const onWindowResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      effect.setSize(window.innerWidth, window.innerHeight);
+    };
     const animate = () => {
       requestAnimationFrame(animate);
       for (let i = 0; i < positions.length; i += 3) {
-        positions[i + 1] -= 5; 
+        positions[i + 1] -= 5;
         if (positions[i + 1] < -3000) {
           positions[i] = Math.random() * 7000 - 3000;
           positions[i + 1] = Math.random() * 7000 + 3000;
@@ -89,15 +103,28 @@ const SnowingScene = () => {
         "position",
         new THREE.BufferAttribute(positions, 3)
       );
+
+      if (orientationData) {
+        const { alpha, beta, gamma } = orientationData;
+        targetPosition.current.set(alpha, beta, gamma);
+        targetPosition.current.multiplyScalar(0.1);
+        velocity.current.lerp(targetPosition.current, 0.05);
+        cameraRef.current.position.x = velocity.current.x;
+        cameraRef.current.position.y = velocity.current.y;
+        cameraRef.current.position.z = velocity.current.z;
+      }
+      effect.render(scene, cameraRef.current);
+
       // Use stereo effect to render the scene
       effect.render(scene, camera);
     };
     animate();
 
     return () => {
-      // Clean up Three.js resources if needed
+      window.removeEventListener("resize", onWindowResize);
+      containerRef.current.removeChild(renderer.domElement);
     };
-  }, []);
+  }, [orientationData]);
 
   return <div ref={containerRef} />;
 };
