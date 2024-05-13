@@ -139,6 +139,22 @@ const SnowingScene = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const disableScroll = (event) => {
+      event.preventDefault();
+    };
+
+    // Disable scroll on mount
+    document.body.style.overflow = "hidden";
+    document.body.addEventListener("scroll", disableScroll);
+
+    // Re-enable scroll on unmount
+    return () => {
+      document.body.style.overflow = "auto";
+      document.body.removeEventListener("scroll", disableScroll);
+    };
+  }, []);
+
   return (
     <>
       <div ref={containerRef} />
