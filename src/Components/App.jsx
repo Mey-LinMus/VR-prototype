@@ -1,5 +1,5 @@
 import React from "react";
-import Particles from "./Prototype-Orientation/PrototypeOrientation";
+import Particles from "./Prototype-Orientation/SphereScene";
 // import * as THREE from "three";
 
 function App() {
