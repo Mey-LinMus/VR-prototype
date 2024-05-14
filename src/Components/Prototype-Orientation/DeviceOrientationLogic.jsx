@@ -1,6 +1,11 @@
 import React, { useEffect } from "react";
 
-const DeviceOrientationControls = ({ camera, renderer, scene }) => {
+const DeviceOrientationControls = ({
+  camera,
+  renderer,
+  scene,
+  onPermissionGranted,
+}) => {
   useEffect(() => {
     const requestPermission = () => {
       if (
@@ -10,6 +15,7 @@ const DeviceOrientationControls = ({ camera, renderer, scene }) => {
         DeviceOrientationEvent.requestPermission()
           .then((response) => {
             if (response === "granted") {
+              onPermissionGranted(); // Notify parent component
               window.addEventListener(
                 "deviceorientation",
                 handleDeviceOrientation
