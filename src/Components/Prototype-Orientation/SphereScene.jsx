@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
+import { StereoEffect } from "three/examples/jsm/effects/StereoEffect.js";
 import DeviceOrientationControls from "./DeviceOrientationLogic";
 import ThreeClassSceneManager from "./ThreeClassSceneManager";
 
@@ -11,10 +12,6 @@ const SphereScene = () => {
   const [renderer, setRenderer] = useState(null);
   const [permissionGranted, setPermissionGranted] = useState(false);
 
-  const handlePermissionGranted = () => {
-    setPermissionGranted(true);
-  };
-
   useEffect(() => {
     let directionalLight;
     const sceneManager = new ThreeClassSceneManager(containerRef, THREE);
@@ -22,8 +19,6 @@ const SphereScene = () => {
     const camera = sceneManager.getCamera();
     const renderer = sceneManager.getRenderer();
     const effect = sceneManager.getEffect();
-
-    // PermissionGranted
 
     const init = () => {
       scene.background = new THREE.Color(0x011c47);
@@ -82,8 +77,6 @@ const SphereScene = () => {
       effect.render(scene, camera);
     };
 
-    // Function to handle device orientation
-
     init();
     animate();
 
@@ -93,10 +86,14 @@ const SphereScene = () => {
     };
   }, []);
 
+  const handlePermissionGranted = () => {
+    setPermissionGranted(true); // Update permission state
+  };
+
   return (
     <>
       <div ref={containerRef} />
-      {scene && camera && renderer && permissionGranted && (
+      {scene && camera && renderer && (
         <DeviceOrientationControls
           camera={camera}
           renderer={renderer}
