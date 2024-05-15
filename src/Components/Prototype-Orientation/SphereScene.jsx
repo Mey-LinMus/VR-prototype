@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { StereoEffect } from "three/examples/jsm/effects/StereoEffect.js";
 import DeviceOrientationControls from "./DeviceOrientationLogic";
 import ThreeClassSceneManager from "./ThreeClassSceneManager";
 
@@ -53,6 +52,7 @@ const SphereScene = () => {
     setScene(scene);
     setCamera(camera);
     setRenderer(renderer);
+    setPermissionGranted(permissionGranted);
 
     const onWindowResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
