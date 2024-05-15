@@ -93,7 +93,6 @@ const SphereScene = () => {
   return (
     <>
       <div ref={containerRef} />
-      <button id="request">Request Permission</button>
       {scene && camera && renderer && (
         <DeviceOrientationControls
           camera={camera}

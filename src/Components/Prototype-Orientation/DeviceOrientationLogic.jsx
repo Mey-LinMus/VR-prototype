@@ -5,6 +5,7 @@ const DeviceOrientationControls = ({
   renderer,
   scene,
   onPermissionGranted,
+  permissionGranted,
 }) => {
   useEffect(() => {
     const requestPermission = () => {
@@ -27,10 +28,16 @@ const DeviceOrientationControls = ({
         alert("DeviceOrientationEvent is not defined");
       }
     };
-    const btn = document.getElementById("request");
-    btn.addEventListener("click", requestPermission);
-    
-    requestPermission();
+
+    const canvas = renderer.domElement;
+
+    const handleCanvasTap = () => {
+      // Only request permission if it hasn't been granted yet
+
+      if (!permissionGranted) {
+        requestPermission();
+      }
+    };
 
     const handleDeviceOrientation = (event) => {
       const { alpha, beta, gamma } = event;
@@ -43,9 +50,10 @@ const DeviceOrientationControls = ({
     };
 
     return () => {
+      canvas.removeEventListener("click", handleCanvasTap);
       window.removeEventListener("deviceorientation", handleDeviceOrientation);
     };
-  }, [camera, renderer, scene, onPermissionGranted]);
+  }, [camera, renderer, scene, onPermissionGranted, permissionGranted]);
 
   return null;
 };
