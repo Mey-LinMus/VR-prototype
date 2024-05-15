@@ -27,6 +27,10 @@ const DeviceOrientationControls = ({
         alert("DeviceOrientationEvent is not defined");
       }
     };
+    const btn = document.getElementById("request");
+    btn.addEventListener("click", requestPermission);
+    
+    requestPermission();
 
     const handleDeviceOrientation = (event) => {
       const { alpha, beta, gamma } = event;
@@ -37,8 +41,6 @@ const DeviceOrientationControls = ({
 
       renderer.render(scene, camera);
     };
-
-    requestPermission();
 
     return () => {
       window.removeEventListener("deviceorientation", handleDeviceOrientation);
