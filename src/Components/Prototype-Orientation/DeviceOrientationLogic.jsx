@@ -28,6 +28,8 @@ const DeviceOrientationControls = ({
       }
     };
 
+    const btn = document.getElementById("request");
+    btn.addEventListener("click", requestPermission);
 
     requestPermission();
 
