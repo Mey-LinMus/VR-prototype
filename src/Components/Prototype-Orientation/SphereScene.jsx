@@ -92,7 +92,26 @@ const SphereScene = () => {
 
   return (
     <>
+      <button
+        id="request"
+        style={{
+          position: "absolute",
+          top: "10px",
+          left: "10px",
+          zIndex: "1000",
+          padding: "10px 20px",
+          fontSize: "16px",
+          backgroundColor: "#eb3434",
+          color: "#fff",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+        }}
+      >
+        click
+      </button>
       <div ref={containerRef} />
+
       {scene && camera && renderer && (
         <DeviceOrientationControls
           camera={camera}
