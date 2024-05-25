@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const DeviceOrientationControls = ({
+const DeviceOrientationManager = ({
   camera,
   renderer,
   scene,
@@ -51,4 +51,4 @@ const DeviceOrientationControls = ({
   return null;
 };
 
-export default DeviceOrientationControls;
+export default DeviceOrientationManager;

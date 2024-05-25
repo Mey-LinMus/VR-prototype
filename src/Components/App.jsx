@@ -1,6 +1,5 @@
 import React from "react";
-import SnowingScene from "./Prototype-Orientation/SnowingScene";
-import SphereScene from "./Prototype-Orientation/SphereScene";
+import SphereScene from "../Projec WorkZen/Visuals/SphereSceneVisual";
 
 function App() {
   return (
