@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
-import DeviceOrientationControls from "../Utils/DeviceOrientationManager";
 import ThreeClassSceneManager from "../Utils/ThreeClassSceneManager";
+import VRButton from "../Utils/VRButton";
 
 const SphereScene = () => {
   const containerRef = useRef(null);
@@ -10,9 +10,7 @@ const SphereScene = () => {
   const [scene, setScene] = useState(null);
   const [camera, setCamera] = useState(null);
   const [renderer, setRenderer] = useState(null);
-  const [permissionGranted, setPermissionGranted] = useState(false);
-  const [isStereo, setIsStereo] = useState(false);
-  
+
   useEffect(() => {
     let directionalLight;
     const sceneManager = new ThreeClassSceneManager(containerRef, THREE);
@@ -54,7 +52,6 @@ const SphereScene = () => {
     setCamera(camera);
     setRenderer(renderer);
     setSceneManager(sceneManager);
-    setPermissionGranted(permissionGranted);
 
     const onWindowResize = () => {
       camera.aspect = window.innerWidth / window.innerHeight;
@@ -90,53 +87,10 @@ const SphereScene = () => {
     };
   }, []);
 
-  const handlePermissionGranted = () => {
-    setPermissionGranted(true); // Update permission state
-  };
-
-  const toggleVR = () => {
-    if (isStereo) {
-      sceneManager.disableStereoEffect();
-      setPermissionGranted(false); // Disable permission when stereo effect is off
-    } else {
-      sceneManager.enableStereoEffect();
-      sceneManager.requestPermission(); // Request permission when stereo effect is on
-    }
-    setIsStereo(!isStereo);
-  };
-
   return (
     <>
-      <button
-        id="vr-toggle"
-        onClick={toggleVR}
-        style={{
-          position: "absolute",
-          top: "10px",
-          left: "10px",
-          zIndex: "1000",
-          padding: "10px 20px",
-          fontSize: "16px",
-          backgroundColor: "#eb3434",
-          color: "#fff",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-        }}
-      >
-        VR
-      </button>
+      {sceneManager && <VRButton sceneManager={sceneManager} />}
       <div ref={containerRef} />
-
-      {scene && camera && renderer && (
-        <DeviceOrientationControls
-          camera={camera}
-          renderer={renderer}
-          scene={scene}
-          containerRef={containerRef} // Pass containerRef as a prop
-          onPermissionGranted={handlePermissionGranted}
-        />
-      )}
     </>
   );
 };

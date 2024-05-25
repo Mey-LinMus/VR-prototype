@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import VRButton from "./VRButton"; 
 
 const DeviceOrientationManager = ({
   camera,
@@ -7,37 +8,11 @@ const DeviceOrientationManager = ({
   containerRef,
   onPermissionGranted,
 }) => {
+  const [permissionGranted, setPermissionGranted] = useState(false);
+  const [isStereo, setIsStereo] = useState(false);
+
   useEffect(() => {
     if (!containerRef.current) return; // Check if containerRef is null
-
-    const requestPermission = () => {
-      if (
-        typeof DeviceOrientationEvent !== "undefined" &&
-        typeof DeviceOrientationEvent.requestPermission === "function"
-      ) {
-        DeviceOrientationEvent.requestPermission()
-          .then((response) => {
-            if (response === "granted") {
-              onPermissionGranted(); // Notify parent component
-              window.addEventListener(
-                "deviceorientation",
-                handleDeviceOrientation
-              );
-            }
-          })
-          .catch(console.error);
-      } else {
-        console.log("DeviceOrientationEvent is not defined");
-      }
-    };
-
-    const btn = document.getElementById("request");
-    if (btn) {
-      // Check if button exists before adding event listener
-      btn.addEventListener("click", requestPermission);
-    }
-
-    requestPermission(); // Call requestPermission initially
 
     const handleDeviceOrientation = (event) => {
       const { alpha, beta, gamma } = event;
@@ -49,16 +24,33 @@ const DeviceOrientationManager = ({
       renderer.render(scene, camera);
     };
 
+    if (permissionGranted) {
+      window.addEventListener("deviceorientation", handleDeviceOrientation);
+    }
+
     return () => {
       window.removeEventListener("deviceorientation", handleDeviceOrientation);
-      if (btn) {
-        // Check if button exists before removing event listener
-        btn.removeEventListener("click", requestPermission);
-      }
     };
-  }, [camera, renderer, scene, onPermissionGranted]);
+  }, [camera, renderer, scene, permissionGranted]);
 
-  return null;
+  const handlePermissionGranted = () => {
+    setPermissionGranted(true); // Update permission state
+  };
+
+  const toggleVR = (value) => {
+    setIsStereo(value);
+    if (!value) {
+      setPermissionGranted(false); // Disable permission when stereo effect is off
+    } else {
+      onPermissionGranted(); // Request permission when stereo effect is on
+    }
+  };
+
+  return (
+    <>
+      <VRButton onToggle={toggleVR} />
+    </>
+  );
 };
 
 export default DeviceOrientationManager;
