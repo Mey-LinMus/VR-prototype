@@ -4,14 +4,14 @@ const VRButton = ({ sceneManager }) => {
   const [isStereo, setIsStereo] = useState(false);
 
   const toggleVR = () => {
-    if (isStereo) {
-      sceneManager.disableStereoEffect();
-      sceneManager.requestPermission(); // Request permission when stereo effect is off
-    } else {
+    if (!isStereo) {
       sceneManager.enableStereoEffect();
-      sceneManager.requestPermission(); // Request permission when stereo effect is on
+      setIsStereo(true);
+    } else {
+      sceneManager.disableStereoEffect();
+      setIsStereo(false);
     }
-    setIsStereo(!isStereo);
+    sceneManager.requestPermission();
   };
 
   return (
