@@ -17,6 +17,7 @@ const SphereScene = () => {
     const scene = sceneManager.getScene();
     const camera = sceneManager.getCamera();
     const renderer = sceneManager.getRenderer();
+    
 
     const init = () => {
       scene.background = new THREE.Color(0x011c47);
