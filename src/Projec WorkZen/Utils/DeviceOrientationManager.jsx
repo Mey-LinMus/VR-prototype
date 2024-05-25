@@ -4,9 +4,12 @@ const DeviceOrientationManager = ({
   camera,
   renderer,
   scene,
+  containerRef,
   onPermissionGranted,
 }) => {
   useEffect(() => {
+    if (!containerRef.current) return; // Check if containerRef is null
+
     const requestPermission = () => {
       if (
         typeof DeviceOrientationEvent !== "undefined" &&
@@ -29,9 +32,12 @@ const DeviceOrientationManager = ({
     };
 
     const btn = document.getElementById("request");
-    btn.addEventListener("click", requestPermission);
+    if (btn) {
+      // Check if button exists before adding event listener
+      btn.addEventListener("click", requestPermission);
+    }
 
-    requestPermission();
+    requestPermission(); // Call requestPermission initially
 
     const handleDeviceOrientation = (event) => {
       const { alpha, beta, gamma } = event;
@@ -45,6 +51,10 @@ const DeviceOrientationManager = ({
 
     return () => {
       window.removeEventListener("deviceorientation", handleDeviceOrientation);
+      if (btn) {
+        // Check if button exists before removing event listener
+        btn.removeEventListener("click", requestPermission);
+      }
     };
   }, [camera, renderer, scene, onPermissionGranted]);
 

@@ -11,8 +11,8 @@ const SphereScene = () => {
   const [camera, setCamera] = useState(null);
   const [renderer, setRenderer] = useState(null);
   const [permissionGranted, setPermissionGranted] = useState(false);
-  const [isStereo, setIsStereo] = useState(true);
-
+  const [isStereo, setIsStereo] = useState(false);
+  
   useEffect(() => {
     let directionalLight;
     const sceneManager = new ThreeClassSceneManager(containerRef, THREE);
@@ -94,11 +94,13 @@ const SphereScene = () => {
     setPermissionGranted(true); // Update permission state
   };
 
-  const toggleStereoEffect = () => {
+  const toggleVR = () => {
     if (isStereo) {
       sceneManager.disableStereoEffect();
+      setPermissionGranted(false); // Disable permission when stereo effect is off
     } else {
       sceneManager.enableStereoEffect();
+      sceneManager.requestPermission(); // Request permission when stereo effect is on
     }
     setIsStereo(!isStereo);
   };
@@ -106,7 +108,8 @@ const SphereScene = () => {
   return (
     <>
       <button
-        id="request"
+        id="vr-toggle"
+        onClick={toggleVR}
         style={{
           position: "absolute",
           top: "10px",
@@ -120,9 +123,8 @@ const SphereScene = () => {
           borderRadius: "5px",
           cursor: "pointer",
         }}
-        onClick={toggleStereoEffect}
       >
-        Toggle Stereo Effect
+        VR
       </button>
       <div ref={containerRef} />
 
@@ -131,6 +133,7 @@ const SphereScene = () => {
           camera={camera}
           renderer={renderer}
           scene={scene}
+          containerRef={containerRef} // Pass containerRef as a prop
           onPermissionGranted={handlePermissionGranted}
         />
       )}
