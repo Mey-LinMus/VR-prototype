@@ -10,7 +10,7 @@ class ThreeClassSceneManager {
     this.scene = null;
     this.renderer = null;
     this.effect = null;
-    this.isStereoEnabled = true; // New flag to track stereo effect state
+    this.isStereoEnabled = false;
 
     this.init();
     this.setupEventListeners();
@@ -101,7 +101,7 @@ class ThreeClassSceneManager {
     this.isStereoEnabled = false;
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
-  
+
   render() {
     if (this.isStereoEnabled) {
       this.effect.render(this.scene, this.camera);

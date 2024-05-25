@@ -24,7 +24,7 @@ const DeviceOrientationManager = ({
           })
           .catch(console.error);
       } else {
-        alert("DeviceOrientationEvent is not defined");
+        console.log("DeviceOrientationEvent is not defined");
       }
     };
 
