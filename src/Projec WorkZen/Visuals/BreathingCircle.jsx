@@ -1,10 +1,15 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ThreeClassSceneManager from "../Utils/ThreeClassSceneManager";
 import * as THREE from "three";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
+import VRButton from "../Utils/VRButton";
 
 const BreathingCircle = () => {
   const containerRef = useRef(null);
   let sceneManager;
+  let composer;
 
   useEffect(() => {
     const init = () => {
@@ -19,6 +24,25 @@ const BreathingCircle = () => {
       sceneManager.getScene().add(ambientLight);
 
       sceneManager.getCamera().position.z = 20;
+
+      const renderScene = new RenderPass(
+        sceneManager.getScene(),
+        sceneManager.getCamera()
+      );
+
+      const bloomPass = new UnrealBloomPass(
+        new THREE.Vector2(window.innerWidth, window.innerHeight),
+        0.1,
+        0.2,
+        0.5
+      );
+      bloomPass.threshold = 0;
+      bloomPass.strength = 0.5;
+      bloomPass.radius = 0.5;
+
+      composer = new EffectComposer(sceneManager.getRenderer());
+      composer.addPass(renderScene);
+      composer.addPass(bloomPass);
 
       let scale = 1;
       let growing = true;
@@ -36,7 +60,7 @@ const BreathingCircle = () => {
         }
         circle.scale.set(scale, scale, scale);
 
-        sceneManager.render();
+        composer.render();
       };
 
       animate();
@@ -52,8 +76,9 @@ const BreathingCircle = () => {
   }, []);
 
   return (
-    <div className="App">
+    <div>
       <div ref={containerRef} />
+      <VRButton sceneManager={sceneManager} />
     </div>
   );
 };
