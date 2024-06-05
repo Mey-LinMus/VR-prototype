@@ -16,7 +16,11 @@ const BreathingCircle = () => {
       sceneManager = new ThreeClassSceneManager(containerRef, THREE);
 
       const geometry = new THREE.CircleGeometry(5, 32);
-      const material = new THREE.MeshBasicMaterial({ color: 0x87ceeb });
+      const material = new THREE.MeshBasicMaterial({
+        color: 0x87ceeb,
+        transparent: true,
+        opacity: 0.4,
+      });
       const circle = new THREE.Mesh(geometry, material);
       sceneManager.getScene().add(circle);
 
@@ -47,7 +51,7 @@ const BreathingCircle = () => {
         new THREE.Vector2(window.innerWidth, window.innerHeight),
         0.1,
         0.2,
-        0.5
+        0.6
       );
       bloomPass.threshold = 0;
       bloomPass.strength = 0.5;

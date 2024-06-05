@@ -27,7 +27,7 @@ class ThreeClassSceneManager {
     );
     this.camera.position.z = 3200;
     this.scene = new this.THREE.Scene();
-    this.renderer = new this.THREE.WebGLRenderer();
+    this.renderer = new this.THREE.WebGLRenderer({ antialias: true });
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     container.appendChild(this.renderer.domElement);
