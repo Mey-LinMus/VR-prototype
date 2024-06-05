@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import ThreeClassSceneManager from "../Utils/ThreeClassSceneManager";
 import * as THREE from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
@@ -24,6 +24,19 @@ const BreathingCircle = () => {
       sceneManager.getScene().add(ambientLight);
 
       sceneManager.getCamera().position.z = 20;
+
+      // Load the environment map
+      const loader = new THREE.CubeTextureLoader();
+      const envMap = loader.load([
+        "/envMap/posx.jpg",
+        "/envMap/negx.jpg",
+        "/envMap/posy.jpg",
+        "/envMap/negy.jpg",
+        "/envMap/posz.jpg",
+        "/envMap/negz.jpg",
+      ]);
+
+      sceneManager.getScene().background = envMap;
 
       const renderScene = new RenderPass(
         sceneManager.getScene(),

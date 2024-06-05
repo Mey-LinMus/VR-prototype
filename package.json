@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@react-three/cannon": "^6.6.0",
     "@react-three/drei": "^9.105.4",
     "@react-three/fiber": "^8.16.5",
     "@react-three/xr": "^5.7.1",
