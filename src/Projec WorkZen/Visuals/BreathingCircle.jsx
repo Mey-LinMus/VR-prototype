@@ -1,36 +1,46 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import ThreeClassSceneManager from "../Utils/ThreeClassSceneManager";
+import VRButton from "../Utils/VRButton";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
-import VRButton from "../Utils/VRButton";
 
-const BreathingCircle = () => {
+const CustomScene = () => {
   const containerRef = useRef(null);
   const [sceneManager, setSceneManager] = useState(null);
+  const [scene, setScene] = useState(null);
+  const [camera, setCamera] = useState(null);
+  const [renderer, setRenderer] = useState(null);
 
   useEffect(() => {
-    const init = () => {
-      const manager = new ThreeClassSceneManager(containerRef, THREE);
-      const scene = manager.getScene();
-      const camera = manager.getCamera();
-      const renderer = manager.getRenderer();
+    let circle, composer, growing;
+    const objects = [];
 
+    const sceneManager = new ThreeClassSceneManager(containerRef, THREE);
+    const scene = sceneManager.getScene();
+    const camera = sceneManager.getCamera();
+    const renderer = sceneManager.getRenderer();
+
+    const init = () => {
+      // Create sphere
       const geometry = new THREE.SphereGeometry(5, 32, 32);
       const material = new THREE.MeshBasicMaterial({
         color: 0xffffff,
         transparent: true,
         opacity: 0.3,
       });
-      const circle = new THREE.Mesh(geometry, material);
+      circle = new THREE.Mesh(geometry, material);
       scene.add(circle);
 
+      // Add ambient light
       const ambientLight = new THREE.AmbientLight(0x404040);
       scene.add(ambientLight);
 
+      // Set camera position
       camera.position.z = 20;
 
+      // Load environment map
       const loader = new THREE.CubeTextureLoader();
       const envMap = loader.load([
         "/envMap/posx.jpg",
@@ -40,11 +50,9 @@ const BreathingCircle = () => {
         "/envMap/posz.jpg",
         "/envMap/negz.jpg",
       ]);
-
       scene.background = envMap;
 
-      const renderScene = new RenderPass(scene, camera);
-
+      // Set up post-processing
       const bloomPass = new UnrealBloomPass(
         new THREE.Vector2(window.innerWidth, window.innerHeight),
         0.1,
@@ -55,12 +63,14 @@ const BreathingCircle = () => {
       bloomPass.strength = 0.5;
       bloomPass.radius = 0.5;
 
-      const composer = new EffectComposer(renderer);
+      composer = new EffectComposer(renderer);
+      const renderScene = new RenderPass(scene, camera);
       composer.addPass(renderScene);
       composer.addPass(bloomPass);
 
+      // Set up animation
       let scale = 1;
-      let growing = true;
+      growing = true;
       const breathingSpeed = 0.005;
 
       const animate = () => {
@@ -76,19 +86,31 @@ const BreathingCircle = () => {
         circle.scale.set(scale, scale, scale);
 
         composer.render();
-        manager.render();
+        sceneManager.render();
       };
 
       animate();
-      setSceneManager(manager);
     };
+
+    setScene(scene);
+    setCamera(camera);
+    setRenderer(renderer);
+    setSceneManager(sceneManager);
 
     init();
 
+    const onWindowResize = () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      sceneManager.effect.setSize(window.innerWidth, window.innerHeight);
+    };
+
+    window.addEventListener("resize", onWindowResize);
+
     return () => {
-      if (sceneManager) {
-        sceneManager.dispose();
-      }
+      window.removeEventListener("resize", onWindowResize);
+      containerRef.current.removeChild(renderer.domElement);
     };
   }, []);
 
@@ -100,4 +122,4 @@ const BreathingCircle = () => {
   );
 };
 
-export default BreathingCircle;
+export default CustomScene;
