@@ -86,12 +86,23 @@ class ThreeClassSceneManager {
     const alpha = event.alpha;
     const beta = event.beta;
     const gamma = event.gamma;
+  
+    let landscapeFactor = 1;
+  
 
-    // Adjusting for landscape left orientation
+    if (gamma < 0) {
+
+      landscapeFactor = -1;
+    } else {
+
+      landscapeFactor = 1;
+    }
+  
     this.camera.rotation.x = (beta * Math.PI) / 180;
-    this.camera.rotation.y = ((gamma + 90) * Math.PI) / 180;
-    this.camera.rotation.z = ((alpha - 90) * Math.PI) / 180;
+    this.camera.rotation.y = ((gamma + 90 * landscapeFactor) * Math.PI) / 180;
+    this.camera.rotation.z = ((alpha - 90 * landscapeFactor) * Math.PI) / 180;
   }
+  
 
   enableStereoEffect() {
     this.isStereoEnabled = true;
