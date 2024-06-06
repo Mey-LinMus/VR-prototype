@@ -1,6 +1,6 @@
 import React from "react";
-// import SphereScene from "../Projec WorkZen/Visuals/SphereSceneVisual";
-// import SnowingScene from "../Projec WorkZen/Visuals/SnowingSceneVisual";
+import SphereScene from "../Projec WorkZen/Visuals/SphereSceneVisual";
+import SnowingScene from "../Projec WorkZen/Visuals/SnowingSceneVisual";
 // import NorthernLightsScene from "../Projec WorkZen/Visuals/NorthernLightScene";
 import BreathingCircle from "../Projec WorkZen/Visuals/BreathingCircle";
 // import GradientChange from "../Projec WorkZen/Visuals/GradientChange";
@@ -8,9 +8,9 @@ import BreathingCircle from "../Projec WorkZen/Visuals/BreathingCircle";
 function App() {
   return (
     <div className="App">
-      {/* <SnowingScene /> */}
+      <SnowingScene />
       {/* <SphereScene /> */}
-      <BreathingCircle />
+      {/* <BreathingCircle /> */}
     </div>
   );
 }
