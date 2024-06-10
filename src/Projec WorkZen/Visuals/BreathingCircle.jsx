@@ -15,7 +15,6 @@ const CustomScene = () => {
 
   useEffect(() => {
     let circle, composer, growing;
-    const objects = [];
 
     const sceneManager = new ThreeClassSceneManager(containerRef, THREE);
     const scene = sceneManager.getScene();
@@ -23,21 +22,25 @@ const CustomScene = () => {
     const renderer = sceneManager.getRenderer();
 
     const init = () => {
-      // Create sphere
       const geometry = new THREE.SphereGeometry(5, 32, 32);
-      const material = new THREE.MeshBasicMaterial({
+      const material = new THREE.MeshStandardMaterial({
         color: 0xffffff,
         transparent: true,
-        opacity: 0.3,
+        opacity: 0.9,
+        roughness: 0.5,
+        metalness: 0.5,
       });
       circle = new THREE.Mesh(geometry, material);
       scene.add(circle);
 
       // Add ambient light
-      const ambientLight = new THREE.AmbientLight(0x404040);
+      const ambientLight = new THREE.AmbientLight(0xffffff);
       scene.add(ambientLight);
 
-      // Set camera position
+      const pointLight = new THREE.PointLight(0xffffff, 10);
+      pointLight.position.set(10, 10, 10);
+      scene.add(pointLight);
+
       camera.position.z = 20;
 
       // Load environment map
@@ -52,7 +55,6 @@ const CustomScene = () => {
       ]);
       scene.background = envMap;
 
-      // Set up post-processing
       const bloomPass = new UnrealBloomPass(
         new THREE.Vector2(window.innerWidth, window.innerHeight),
         0.1,
@@ -68,7 +70,6 @@ const CustomScene = () => {
       composer.addPass(renderScene);
       composer.addPass(bloomPass);
 
-      // Set up animation
       let scale = 1;
       growing = true;
       const breathingSpeed = 0.005;
