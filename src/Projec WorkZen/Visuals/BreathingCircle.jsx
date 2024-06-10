@@ -23,27 +23,30 @@ const CustomScene = () => {
 
     const init = () => {
       const geometry = new THREE.SphereGeometry(5, 32, 32);
+
       const material = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        transparent: true,
-        opacity: 0.9,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.1,
+        metalness: 0.9,
         roughness: 0.5,
-        metalness: 0.5,
+        color: 0xffffff,
+        normalScale: new THREE.Vector2(0.15, 0.15),
+        transparent: true, // Enable transparency
+        opacity: 0.75, // Set opacity value (0.0 to 1.0)
       });
+
       circle = new THREE.Mesh(geometry, material);
       scene.add(circle);
 
-      // Add ambient light
-      const ambientLight = new THREE.AmbientLight(0xffffff);
+      const ambientLight = new THREE.AmbientLight(0xcccccc);
       scene.add(ambientLight);
 
-      const pointLight = new THREE.PointLight(0xffffff, 10);
+      const pointLight = new THREE.PointLight(0xffffff, 1);
       pointLight.position.set(10, 10, 10);
       scene.add(pointLight);
 
       camera.position.z = 20;
 
-      // Load environment map
       const loader = new THREE.CubeTextureLoader();
       const envMap = loader.load([
         "/envMap/posx.jpg",
@@ -54,6 +57,8 @@ const CustomScene = () => {
         "/envMap/negz.jpg",
       ]);
       scene.background = envMap;
+
+      scene.fog = new THREE.Fog(0xdddddd, 5, 25);
 
       const bloomPass = new UnrealBloomPass(
         new THREE.Vector2(window.innerWidth, window.innerHeight),
