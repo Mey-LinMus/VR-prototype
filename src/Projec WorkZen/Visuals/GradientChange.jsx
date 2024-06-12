@@ -11,13 +11,13 @@ const CustomScene = () => {
   const [renderer, setRenderer] = useState(null);
 
   useEffect(() => {
-    // Initialize ThreeClassSceneManager and required objects
+
     const sceneManager = new ThreeClassSceneManager(containerRef, THREE);
     const scene = sceneManager.getScene();
     const camera = sceneManager.getCamera();
     const renderer = sceneManager.getRenderer();
 
-    // Initialize function containing scene setup and animation
+
     const init = () => {
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
       scene.add(ambientLight);
@@ -27,24 +27,24 @@ const CustomScene = () => {
       scene.add(pointLight);
 
       const vertexShader = `
-      varying vec2 vUv;
-      void main() {
-        vUv = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `;
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `;
 
       const fragmentShader = `
-      uniform float time;
-      varying vec2 vUv;
-      void main() {
-        vec3 color1 = vec3(0.0, 0.5, 1.0);
-        vec3 color2 = vec3(1.0, 0.5, 0.0);
-        float gradient = (sin(time + vUv.y * 3.14159) + 1.0) / 2.0;
-        vec3 color = mix(color1, color2, gradient);
-        gl_FragColor = vec4(color, 1.0);
-      }
-    `;
+        uniform float time;
+        varying vec2 vUv;
+        void main() {
+          vec3 color1 = vec3(0.0, 0.5, 1.0);
+          vec3 color2 = vec3(1.0, 0.5, 0.0);
+          float gradient = (sin(time + vUv.y * 3.14159) + 1.0) / 2.0;
+          vec3 color = mix(color1, color2, gradient);
+          gl_FragColor = vec4(color, 1.0);
+        }
+      `;
 
       const shaderMaterial = new THREE.ShaderMaterial({
         uniforms: {
@@ -58,6 +58,10 @@ const CustomScene = () => {
       const sphereGeometry = new THREE.SphereGeometry(100, 32, 32);
       const sphere = new THREE.Mesh(sphereGeometry, shaderMaterial);
       scene.add(sphere);
+
+      
+      camera.position.set(0, 0, 0); 
+      camera.rotation.y = Math.PI; 
 
       const animate = () => {
         requestAnimationFrame(animate);
@@ -91,7 +95,6 @@ const CustomScene = () => {
       containerRef.current.removeChild(renderer.domElement);
     };
   }, []); 
-
 
   return (
     <>
