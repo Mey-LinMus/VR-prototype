@@ -21,39 +21,39 @@ const LavaLamp = () => {
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
       scene.add(ambientLight);
 
-      const pointLight = new THREE.PointLight(0xffffff, 1);
+      const pointLight = new THREE.PointLight(0xffa000, 1); // Warm orange point light
       pointLight.position.set(5, 5, 5);
       scene.add(pointLight);
 
       const noise3D = createNoise3D();
-      camera.position.set(0, 0, 5);
+      camera.position.set(0, 0, 10); // Adjusted camera position for better view
       camera.lookAt(0, 0, 0);
 
       const vertexShader = `
-      uniform float time;
-      varying vec2 vUv;
-      varying vec3 vNormal;
-      void main() {
-        vUv = uv;
-        vNormal = normal;
-        vec3 transformed = position;
-        transformed.z += sin(position.x * 10.0 + time) * 0.1;
-        transformed.z += sin(position.y * 10.0 + time) * 0.1;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(transformed, 1.0);
-      }
-    `;
+        uniform float time;
+        varying vec2 vUv;
+        varying vec3 vNormal;
+        void main() {
+          vUv = uv;
+          vNormal = normal;
+          vec3 transformed = position;
+          transformed.z += sin(position.x * 3.0 + time) * 0.5; // Adjusted speed and magnitude
+          transformed.z += sin(position.y * 3.0 + time) * 0.5; // Adjusted speed and magnitude
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(transformed, 1.0);
+        }
+      `;
 
       const fragmentShader = `
-      uniform float time;
-      varying vec2 vUv;
-      varying vec3 vNormal;
-      void main() {
-        float r = abs(sin(time + vUv.x * 3.0));
-        float g = abs(sin(time + vUv.y * 3.0));
-        float b = abs(sin(time + vUv.x * 3.0 + vUv.y * 3.0));
-        gl_FragColor = vec4(r, g, b, 1.0);
-      }
-    `;
+        uniform float time;
+        varying vec2 vUv;
+        varying vec3 vNormal;
+        void main() {
+          float r = abs(sin(time + vUv.x * 2.0));
+          float g = abs(sin(time + vUv.y * 2.0));
+          float b = abs(sin(time + vUv.x * 2.0 + vUv.y * 2.0));
+          gl_FragColor = vec4(r, g * 0.5, b * 0.2, 1.0); // Soft warm colors
+        }
+      `;
 
       const material = new THREE.ShaderMaterial({
         uniforms: {
@@ -63,14 +63,27 @@ const LavaLamp = () => {
         fragmentShader,
       });
 
-      const geometry = new THREE.SphereGeometry(1, 32, 32);
-      const sphere = new THREE.Mesh(geometry, material);
-      scene.add(sphere);
+      const numSpheres = 80;
+      const spheres = [];
+
+      for (let i = 0; i < numSpheres; i++) {
+        const geometry = new THREE.SphereGeometry(1, 32, 32);
+        const sphere = new THREE.Mesh(geometry, material);
+
+        sphere.position.set(
+          Math.random() * 20 - 10,
+          Math.random() * 20 - 10,
+          Math.random() * 20 - 10
+        );
+
+        scene.add(sphere);
+        spheres.push(sphere);
+      }
 
       const animate = () => {
         requestAnimationFrame(animate);
 
-        material.uniforms.time.value += 0.05;
+        material.uniforms.time.value += 0.01;
 
         sceneManager.render();
       };
